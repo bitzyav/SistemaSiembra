@@ -5,10 +5,18 @@
  */
 package dominio;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  *
  * @author Bitzy
  */
 public enum TipoRiego {
-    PRE_SIEMBRA, PRIMER_AUXILIO, SEGUNDO_AUXILIO, TERCER_AUXILIO, CUARTO_AUXILIO
+    PRE_SIEMBRA, 
+    PRIMER_AUXILIO, 
+    SEGUNDO_AUXILIO, 
+    TERCER_AUXILIO, 
+    CUARTO_AUXILIO;
+    
 }

@@ -6,6 +6,8 @@
 package frames;
 
 import Controller.BaseController;
+import Repository.HectareaRepository;
+import Repository.RiegoRepository;
 import dominio.DetalleRiegos;
 import dominio.EstadoProceso;
 import dominio.Hectarea;
@@ -15,6 +17,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
 
 /**
  *
@@ -23,6 +26,7 @@ import javax.swing.JOptionPane;
 public class FrmRiego extends javax.swing.JFrame {
 
     BaseController control;
+
     /**
      * Creates new form FrmRiego
      */
@@ -30,6 +34,8 @@ public class FrmRiego extends javax.swing.JFrame {
         initComponents();
         control = new BaseController();
         this.setLocationRelativeTo(null);
+        obtenerRiegos();
+        obtenerHectareas();
     }
 
     /**
@@ -143,12 +149,18 @@ public class FrmRiego extends javax.swing.JFrame {
         btnRegistrar.setFont(new java.awt.Font("Ebrima", 1, 14)); // NOI18N
         btnRegistrar.setForeground(new java.awt.Color(255, 255, 255));
         btnRegistrar.setText("Registrar");
+        btnRegistrar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnRegistrarActionPerformed(evt);
+            }
+        });
 
         jLabel12.setFont(new java.awt.Font("Ebrima", 1, 14)); // NOI18N
         jLabel12.setForeground(new java.awt.Color(51, 51, 51));
         jLabel12.setText("Tipo de Riego");
 
         cboxTipoRiego.setFont(new java.awt.Font("Ebrima", 0, 14)); // NOI18N
+        cboxTipoRiego.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Seleccione...", "Presiembra", "Primer auxilio", "Segundo auxilio", "Tercer auxilio", "Cuarto auxilio" }));
 
         jLabel13.setFont(new java.awt.Font("Ebrima", 1, 14)); // NOI18N
         jLabel13.setForeground(new java.awt.Color(51, 51, 51));
@@ -166,40 +178,48 @@ public class FrmRiego extends javax.swing.JFrame {
         tblHectareas.setFont(new java.awt.Font("Ebrima", 0, 12)); // NOI18N
         tblHectareas.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null}
+                {null, null, null},
+                {null, null, null},
+                {null, null, null},
+                {null, null, null},
+                {null, null, null},
+                {null, null, null},
+                {null, null, null},
+                {null, null, null},
+                {null, null, null},
+                {null, null, null},
+                {null, null, null},
+                {null, null, null},
+                {null, null, null},
+                {null, null, null},
+                {null, null, null},
+                {null, null, null},
+                {null, null, null},
+                {null, null, null},
+                {null, null, null}
             },
             new String [] {
-                "ID Riego", "No. Hectáreas", "Tipo Riego", "Cultivo", "Ubicación predio", "Capacidad agua", "Fecha y hora", "Observaciones", "Estado"
+                "ID Hectarea", "Bloque", "Ubicación predio"
             }
-        ));
+        ) {
+            boolean[] canEdit = new boolean [] {
+                false, true, false
+            };
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
         jScrollPane3.setViewportView(tblHectareas);
 
         btnBuscarHectareas.setBackground(new java.awt.Color(51, 51, 51));
-        btnBuscarHectareas.setFont(new java.awt.Font("Ebrima", 1, 14)); // NOI18N
+        btnBuscarHectareas.setFont(new java.awt.Font("Ebrima", 1, 12)); // NOI18N
         btnBuscarHectareas.setForeground(new java.awt.Color(255, 255, 255));
         btnBuscarHectareas.setText("Buscar");
 
-        txtBuscarHectareas.setFont(new java.awt.Font("Ebrima", 0, 14)); // NOI18N
+        txtBuscarHectareas.setFont(new java.awt.Font("Ebrima", 0, 12)); // NOI18N
 
-        jLabel7.setFont(new java.awt.Font("Ebrima", 1, 14)); // NOI18N
+        jLabel7.setFont(new java.awt.Font("Ebrima", 1, 12)); // NOI18N
         jLabel7.setForeground(new java.awt.Color(51, 51, 51));
         jLabel7.setText("Bloque");
 
@@ -210,26 +230,27 @@ public class FrmRiego extends javax.swing.JFrame {
             .addGroup(jPanel5Layout.createSequentialGroup()
                 .addGap(42, 42, 42)
                 .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 739, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 589, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(jPanel5Layout.createSequentialGroup()
                         .addComponent(jLabel7)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(txtBuscarHectareas, javax.swing.GroupLayout.PREFERRED_SIZE, 271, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
                         .addComponent(btnBuscarHectareas)))
-                .addContainerGap(43, Short.MAX_VALUE))
+                .addContainerGap(44, Short.MAX_VALUE))
         );
         jPanel5Layout.setVerticalGroup(
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel5Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(txtBuscarHectareas, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(btnBuscarHectareas)
-                    .addComponent(jLabel7))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 134, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(20, Short.MAX_VALUE))
+                    .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jLabel7)
+                        .addComponent(txtBuscarHectareas, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 165, Short.MAX_VALUE)
+                .addContainerGap())
         );
 
         jPanel6.setBackground(new java.awt.Color(255, 255, 255));
@@ -241,28 +262,28 @@ public class FrmRiego extends javax.swing.JFrame {
         tblHectareasSelec.setFont(new java.awt.Font("Ebrima", 0, 12)); // NOI18N
         tblHectareasSelec.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null}
+                {null, null, null},
+                {null, null, null},
+                {null, null, null},
+                {null, null, null},
+                {null, null, null},
+                {null, null, null},
+                {null, null, null},
+                {null, null, null},
+                {null, null, null},
+                {null, null, null},
+                {null, null, null},
+                {null, null, null},
+                {null, null, null},
+                {null, null, null},
+                {null, null, null},
+                {null, null, null},
+                {null, null, null},
+                {null, null, null},
+                {null, null, null}
             },
             new String [] {
-                "ID Riego", "No. Hectáreas", "Tipo Riego", "Cultivo", "Ubicación predio", "Capacidad agua", "Fecha y hora", "Observaciones", "Estado"
+                "ID Hectárea", "Bloque", "Ubicación predio"
             }
         ));
         jScrollPane4.setViewportView(tblHectareasSelec);
@@ -273,13 +294,13 @@ public class FrmRiego extends javax.swing.JFrame {
             jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel6Layout.createSequentialGroup()
                 .addGap(42, 42, 42)
-                .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 736, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(46, Short.MAX_VALUE))
+                .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 593, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(40, Short.MAX_VALUE))
         );
         jPanel6Layout.setVerticalGroup(
             jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel6Layout.createSequentialGroup()
-                .addGap(32, 32, 32)
+                .addGap(20, 20, 20)
                 .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 187, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(20, Short.MAX_VALUE))
         );
@@ -323,24 +344,22 @@ public class FrmRiego extends javax.swing.JFrame {
                             .addComponent(jLabel14, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(txtNombreEmpleado, javax.swing.GroupLayout.PREFERRED_SIZE, 153, javax.swing.GroupLayout.PREFERRED_SIZE))))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addGap(387, 387, 387)
                         .addComponent(btnRegistrar)
-                        .addGap(81, 81, 81)
-                        .addComponent(btnCancelar)))
-                .addGap(48, 48, 48))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(btnCancelar))
+                    .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                        .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(40, 40, 40))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
                         .addGap(27, 27, 27)
                         .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addGroup(jPanel3Layout.createSequentialGroup()
@@ -360,9 +379,12 @@ public class FrmRiego extends javax.swing.JFrame {
                             .addComponent(txtNombreEmpleado, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addGroup(jPanel3Layout.createSequentialGroup()
                                 .addComponent(jLabel14)
-                                .addGap(44, 44, 44)))
-                        .addGap(65, 65, 65)))
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                .addGap(44, 44, 44))))
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel3Layout.createSequentialGroup()
                         .addComponent(jLabel6)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -370,10 +392,12 @@ public class FrmRiego extends javax.swing.JFrame {
                         .addGap(64, 64, 64)
                         .addComponent(jLabel8)
                         .addGap(18, 18, 18)
-                        .addComponent(jScrollPane2))
-                    .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(31, 31, 31)
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(31, 31, 31))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
+                        .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)))
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnCancelar)
                     .addComponent(btnRegistrar))
                 .addContainerGap(20, Short.MAX_VALUE))
@@ -388,28 +412,28 @@ public class FrmRiego extends javax.swing.JFrame {
         tblRiegos.setFont(new java.awt.Font("Ebrima", 0, 12)); // NOI18N
         tblRiegos.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null}
+                {null, null, null, null, null, null},
+                {null, null, null, null, null, null},
+                {null, null, null, null, null, null},
+                {null, null, null, null, null, null},
+                {null, null, null, null, null, null},
+                {null, null, null, null, null, null},
+                {null, null, null, null, null, null},
+                {null, null, null, null, null, null},
+                {null, null, null, null, null, null},
+                {null, null, null, null, null, null},
+                {null, null, null, null, null, null},
+                {null, null, null, null, null, null},
+                {null, null, null, null, null, null},
+                {null, null, null, null, null, null},
+                {null, null, null, null, null, null},
+                {null, null, null, null, null, null},
+                {null, null, null, null, null, null},
+                {null, null, null, null, null, null},
+                {null, null, null, null, null, null}
             },
             new String [] {
-                "ID Riego", "No. Hectáreas", "Tipo Riego", "Cultivo", "Ubicación predio", "Capacidad agua", "Fecha y hora", "Observaciones", "Estado"
+                "ID Riego", "Tipo Riego", "Capacidad agua", "Fecha y hora", "Observaciones", "Estado"
             }
         ));
         jScrollPane1.setViewportView(tblRiegos);
@@ -443,8 +467,10 @@ public class FrmRiego extends javax.swing.JFrame {
         jLabel11.setText("Cambiar Estado");
 
         cboxEstado.setFont(new java.awt.Font("Ebrima", 0, 14)); // NOI18N
+        cboxEstado.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Seleccione...", "En espera", "Iniciado", "En proceso", "Finalizado" }));
 
         cboxCultivoBuscar.setFont(new java.awt.Font("Ebrima", 0, 14)); // NOI18N
+        cboxCultivoBuscar.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Seleccione...", "Trigo", "Garbanzo", "Maiz", "Soya" }));
 
         javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
         jPanel4.setLayout(jPanel4Layout);
@@ -452,16 +478,16 @@ public class FrmRiego extends javax.swing.JFrame {
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel4Layout.createSequentialGroup()
                 .addGap(42, 42, 42)
-                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addGroup(jPanel4Layout.createSequentialGroup()
                         .addComponent(jLabel11)
-                        .addGap(18, 18, 18)
-                        .addComponent(cboxEstado, javax.swing.GroupLayout.PREFERRED_SIZE, 137, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(26, 26, 26)
+                        .addComponent(cboxEstado, javax.swing.GroupLayout.PREFERRED_SIZE, 142, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
                         .addComponent(btnAceptar)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(btnActualizar)
-                        .addGap(107, 107, 107)
+                        .addGap(98, 98, 98)
                         .addComponent(btnEliminar))
                     .addGroup(jPanel4Layout.createSequentialGroup()
                         .addComponent(jLabel10)
@@ -469,8 +495,8 @@ public class FrmRiego extends javax.swing.JFrame {
                         .addComponent(cboxCultivoBuscar, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(28, 28, 28)
                         .addComponent(btnBuscar))
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 1242, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(50, Short.MAX_VALUE))
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 1093, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(40, Short.MAX_VALUE))
         );
         jPanel4Layout.setVerticalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -502,7 +528,7 @@ public class FrmRiego extends javax.swing.JFrame {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap(43, Short.MAX_VALUE))
+                .addContainerGap(46, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -528,6 +554,10 @@ public class FrmRiego extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void btnRegistrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRegistrarActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnRegistrarActionPerformed
 
     /**
      * @param args the command line arguments
@@ -565,43 +595,100 @@ public class FrmRiego extends javax.swing.JFrame {
         });
     }
 
-//    public void registrarRiego() {
-//        List<Object> entidades = new ArrayList<>();
-//
-//        Riego riego = new Riego();
-//        Date fecha = new Date();
-//        riego.setCapacidadAgua(Integer.parseInt(txtCapacidadAgua.getText()));
-//        riego.setEstado(EstadoProceso.valueOf((String)cboxEstado.getSelectedItem()));
-//        riego.setFecha(fecha);
-//        riego.setObservaciones(txtaObservaciones.getText());
-//        riego.setNombreEmpleado(txtNombreEmpleado.getText());
-//        riego.setTipoRiego(TipoRiego.valueOf((String)cboxTipoRiego.getSelectedItem()));
-//        for (int i = 0; i < tblHectareasSelec.getRowCount(); i++) {
-//            Integer idHectarea = (Integer) tblHectareasSelec.getValueAt(i, 0);
-//      
-//            Hectarea hectarea = this.control.getHectareaRepository().buscarPorID(idHectarea);
-//            riego.agregarHectarea(new DetalleRiegos(hectarea, riego, fecha, txtNombreEmpleado.getText()));
-//        }
-//        entidades.add(riego);
-//
-//        DetalleRiegos detalles = new DetalleRiegos();
-//        for (int i = 0; i < tblProductosSelec.getRowCount(); i++) {
-//
-//            Integer idRiego = (Integer) tblHectareasSelec.getValueAt(i, 0);
-//            detalles.setHectarea(control.getHectareaRepository().buscarPorID(idRiego));
-//            detalles.setRiego(riego);
-//            detalles.setFecha(fecha);
-//            detalles.setNombreTrabajador(txtNombreEmpleado.getText());
-//            detalles.setRiego(riego);
-//
-//        }
-//        entidades.add(detalles);
-//        if (control.getRiegoRepository().guardar(entidades)) {
-//            JOptionPane.showMessageDialog(this, "La venta ha sido registrada",
-//                    "Registrada", JOptionPane.INFORMATION_MESSAGE);
-//        }
+    public void registrarRiego() {
+        List<Object> entidades = new ArrayList<>();
+        Riego riego = new Riego();
+        Date fecha = new Date();
+        riego.setCapacidadAgua(Integer.parseInt(txtCapacidadAgua.getText()));
+        riego.setEstado(EstadoProceso.valueOf((String) cboxEstado.getSelectedItem()));
+        riego.setFechaHora(fecha);
+        riego.setObservaciones(txtaObservaciones.getText());
+        riego.setNombreEmpleado(txtNombreEmpleado.getText());
+        riego.setTipoRiego(TipoRiego.valueOf((String) cboxTipoRiego.getSelectedItem()));
+        for (int i = 0; i < tblHectareasSelec.getRowCount(); i++) {
+            Integer idHectarea = (Integer) tblHectareasSelec.getValueAt(i, 0);
+            Hectarea hectarea = this.control.getHectareaRepository().buscarPorID(idHectarea);
+            riego.agregarHectarea(new DetalleRiegos(hectarea, riego, fecha, txtNombreEmpleado.getText()));
+        }
+        entidades.add(riego);
 
-//    }
+        DetalleRiegos detalle = new DetalleRiegos();
+        for (int i = 0; i < tblHectareasSelec.getRowCount(); i++) {
+
+            Integer idHectarea = (Integer) tblHectareasSelec.getValueAt(i, 0);
+            detalle.setHectarea(control.getHectareaRepository().buscarPorID(idHectarea));
+            detalle.setFechaHora((Date) riego.getFechaHora());
+            detalle.setNombreEmpleado(riego.getNombreEmpleado());
+            detalle.setRiego(riego);
+
+        }
+        entidades.add(detalle);
+        if (control.getRiegoRepository().guardar(entidades)) {
+            JOptionPane.showMessageDialog(this, "El riego ha sido registrado",
+                    "Registrado", JOptionPane.INFORMATION_MESSAGE);
+        }
+
+    }
+
+    public void seleccionarHectareas() {
+        int fila = this.tblHectareas.getSelectedRow();
+        DefaultTableModel modeloHectareas = (DefaultTableModel) this.tblHectareas.getModel();
+        Integer idHectarea = (Integer) modeloHectareas.getValueAt(fila, 0);
+        Hectarea hectarea = control.getHectareaRepository().buscarPorID(idHectarea);
+
+        boolean agregado = false;
+        for (int i = 0; i < tblHectareasSelec.getRowCount(); i++) {
+            if (tblHectareasSelec.getValueAt(i, 0) == idHectarea) {
+                agregado = true;
+            }
+        }
+        if (agregado == false) {
+            DefaultTableModel modeloSeleccionados = (DefaultTableModel) tblHectareasSelec.getModel();
+            modeloSeleccionados.addRow(new Object[]{hectarea.getId(), hectarea.getBloque(),
+                hectarea.getUbicacionPredio()});
+
+        } else {
+//            JOptionPane.showMessageDialog(this, "El producto ya está en "
+//                    + "tu carrito.", "Información", JOptionPane.INFORMATION_MESSAGE);
+        }
+    }
+    
+    public void deseleccionarHectareas() {
+        int fila = this.tblHectareasSelec.getSelectedRow();
+        DefaultTableModel modelo = (DefaultTableModel) this.tblHectareasSelec.getModel();
+        Integer idHectarea = (Integer) modelo.getValueAt(fila, 0);
+        Hectarea hectarea = control.getHectareaRepository().buscarPorID(idHectarea);
+        modelo.removeRow(fila);
+    }
+
+    public void obtenerRiegos() {
+        List<Riego> riegos = control.getRiegoRepository().buscarTodos();
+        if (riegos != null) {
+            DefaultTableModel modelo = (DefaultTableModel) tblRiegos.getModel();
+            modelo.setRowCount(0);
+            for (Riego riego : riegos) {
+                modelo.addRow(riego.toArray());
+            }
+        } else {
+            JOptionPane.showMessageDialog(this, "Sin resultados.",
+                    "Información", JOptionPane.INFORMATION_MESSAGE);
+        }
+    }
+    
+    public void obtenerHectareas() {
+        List<Hectarea> hectareas = control.getHectareaRepository().buscarTodos();
+        if (hectareas != null) {
+            DefaultTableModel modelo = (DefaultTableModel) tblHectareas.getModel();
+            modelo.setRowCount(0);
+            for (Hectarea hectarea : hectareas) {
+                modelo.addRow(hectarea.toArray());
+            }
+        } else {
+            JOptionPane.showMessageDialog(this, "Sin resultados.",
+                    "Información", JOptionPane.INFORMATION_MESSAGE);
+        }
+    }
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAceptar;
     private javax.swing.JButton btnActualizar;

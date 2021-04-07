@@ -10,5 +10,14 @@ package dominio;
  * @author Bitzy
  */
 public enum TipoCultivo {
-    TRIGO, GARBANZO, MAIZ, SOYA
+    TRIGO("Trigo"), 
+    GARBANZO("Garbanzo"), 
+    MAIZ("Maiz"), 
+    SOYA("Soya"); 
+    
+    public final String label;
+
+    private TipoCultivo(String label) {
+        this.label = label;
+    }
 }

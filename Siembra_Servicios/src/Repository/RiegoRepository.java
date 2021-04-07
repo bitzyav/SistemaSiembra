@@ -7,6 +7,7 @@ package Repository;
 
 import dominio.Riego;
 import java.util.ArrayList;
+import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import javax.persistence.criteria.CriteriaQuery;
@@ -15,13 +16,17 @@ import javax.persistence.criteria.CriteriaQuery;
  *
  * @author Bitzy
  */
-public class RiegoRepository extends BaseRepository<Riego>{
+public class RiegoRepository extends BaseRepository<Riego> {
+
     EntityManager entityManager = this.createEntityManager();
-    
+
     @Override
-    public boolean guardar(Riego riego) {
+    public boolean guardar(List<Object> lista) {
         entityManager.getTransaction().begin();
-        entityManager.persist(riego);
+        for (Object object : lista) {
+            entityManager.persist(object);
+        }
+
         entityManager.getTransaction().commit();
         return true;
     }
@@ -33,9 +38,8 @@ public class RiegoRepository extends BaseRepository<Riego>{
         if (riego != null) {
             riego.setCapacidadAgua(actualizado.getCapacidadAgua());
             riego.setEstado(actualizado.getEstado());
-            riego.setFecha(actualizado.getFechaHora());
+            riego.setFechaHora(actualizado.getFechaHora());
             riego.setHectareas(actualizado.getHectareas());
-            riego.setNumHectareas(actualizado.getNumHectareas());
             riego.setObservaciones(actualizado.getObservaciones());
             riego.setTipoRiego(actualizado.getTipoRiego());
 
@@ -65,14 +69,13 @@ public class RiegoRepository extends BaseRepository<Riego>{
     }
 
     @Override
-    public ArrayList<Riego> buscarTodos() {
+    public List<Riego> buscarTodos() {
         entityManager.getTransaction().begin();
         CriteriaQuery criteria = entityManager.getCriteriaBuilder().createQuery();
         criteria.select(criteria.from(Riego.class));
         Query query = entityManager.createQuery(criteria);
-        ArrayList<Riego> riegos = new ArrayList<>(query.getResultList());
+        List<Riego> riegos = query.getResultList();
         entityManager.getTransaction().commit();
-        entityManager.close();
         return riegos;
     }
 
@@ -82,5 +85,5 @@ public class RiegoRepository extends BaseRepository<Riego>{
         Riego riego = entityManager.find(Riego.class, id);
         entityManager.getTransaction().commit();
         return riego;
-    } 
+    }
 }

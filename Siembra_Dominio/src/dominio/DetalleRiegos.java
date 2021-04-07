@@ -40,7 +40,7 @@ public class DetalleRiegos implements Serializable {
     
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name="fecha_hora")
-    private Date fecha;
+    private Date fechaHora;
     
     @Column(name="nombre_empleado", length=100, nullable=false)
     private String nombreEmpleado;
@@ -48,11 +48,11 @@ public class DetalleRiegos implements Serializable {
     public DetalleRiegos() {
     }
 
-    public DetalleRiegos(Hectarea hectarea, Riego riego, Date fecha, String nombreTrabajador) {
+    public DetalleRiegos(Hectarea hectarea, Riego riego, Date fechaHora, String nombreEmpleado) {
         this.hectarea = hectarea;
         this.riego = riego;
-        this.fecha = fecha;
-        this.nombreEmpleado = nombreTrabajador;
+        this.fechaHora = fechaHora;
+        this.nombreEmpleado = nombreEmpleado;
     }
 
     public Integer getId() {
@@ -67,11 +67,11 @@ public class DetalleRiegos implements Serializable {
         return riego;
     }
 
-    public Date getFecha() {
-        return fecha;
+    public Date getFechaHora() {
+        return fechaHora;
     }
 
-    public String getNombreTrabajador() {
+    public String getNombreEmpleado() {
         return nombreEmpleado;
     }
 
@@ -87,12 +87,12 @@ public class DetalleRiegos implements Serializable {
         this.riego = riego;
     }
 
-    public void setFecha(Date fecha) {
-        this.fecha = fecha;
+    public void setFechaHora(Date fechaHora) {
+        this.fechaHora = fechaHora;
     }
 
-    public void setNombreTrabajador(String nombreTrabajador) {
-        this.nombreEmpleado = nombreTrabajador;
+    public void setNombreEmpleado(String nombreEmpleado) {
+        this.nombreEmpleado = nombreEmpleado;
     }
 
     @Override
@@ -120,4 +120,11 @@ public class DetalleRiegos implements Serializable {
         return "dominio.RelHectareaRiego[ id=" + id + " ]";
     }
     
+    public Object[] toArray() {
+        return new Object[]{
+            this.hectarea.getId(),
+            this.hectarea.getBloque(),
+            this.hectarea.getUbicacionPredio()
+        };
+    }
 }

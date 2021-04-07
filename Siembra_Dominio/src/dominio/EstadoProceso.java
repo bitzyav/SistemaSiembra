@@ -10,5 +10,14 @@ package dominio;
  * @author Bitzy
  */
 public enum EstadoProceso {
-    EN_ESPERA, INICIADO, EN_PROCESO, FINALIZADO
+    EN_ESPERA("En espera"), 
+    INICIADO("Iniciado"), 
+    EN_PROCESO("En proceso"), 
+    FINALIZADO("Finalizado");
+    
+    public final String label;
+
+    private EstadoProceso(String label) {
+        this.label = label;
+    }
 }

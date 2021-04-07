@@ -127,7 +127,7 @@ public class Riego implements Serializable {
         this.capacidadAgua = capacidadAgua;
     }
 
-    public void setFecha(Date fechaHora) {
+    public void setFechaHora(Date fechaHora) {
         this.fechaHora = fechaHora;
     }
 
@@ -166,6 +166,18 @@ public class Riego implements Serializable {
     @Override
     public String toString() {
         return "dominio.Riego[ id=" + id + " ]";
+    }
+    
+    public Object[] toArray() {
+        return new Object[]{
+            this.getId(),
+            this.getTipoRiego(),
+            this.getCapacidadAgua(),
+            this.getFechaHora(),
+            this.getObservaciones(),
+            this.getNombreEmpleado(),
+            this.getEstado()
+        };
     }
 }
     

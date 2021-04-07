@@ -39,21 +39,26 @@ public class Hectarea implements Serializable {
     @OneToMany(mappedBy = "hectarea", cascade = CascadeType.ALL)
     private List<DetalleRiegos> riegos;
     
-    @OneToMany(mappedBy = "hectarea", cascade = CascadeType.ALL)
-    private List<DetalleDeshierbe> deshierbes;
+//    @OneToMany(mappedBy = "hectarea", cascade = CascadeType.ALL)
+//    private List<DetalleDeshierbe> deshierbes;
 
+    public Hectarea(String ubicacionPredio, String bloque) {
+        this.ubicacionPredio = ubicacionPredio;
+        this.bloque = bloque;
+    }
+    
     public Hectarea() {
         this.riegos = new ArrayList();
-        this.deshierbes = new ArrayList();
+//        this.deshierbes = new ArrayList();
     }
     
     public void agregarRiego(DetalleRiegos detalle){
         this.riegos.add(detalle);
     }
     
-    public void agregarDeshierbe(DetalleDeshierbe detalle){
-        this.deshierbes.add(detalle);
-    }
+//    public void agregarDeshierbe(DetalleDeshierbe detalle){
+//        this.deshierbes.add(detalle);
+//    }
     
     public Integer getId() {
         return id;
@@ -112,4 +117,11 @@ public class Hectarea implements Serializable {
         return "dominio.Hectarea[ id=" + id + " ]";
     }
     
+    public Object[] toArray() {
+        return new Object[]{
+            this.getId(),
+            this.getBloque(),
+            this.getUbicacionPredio()
+        };
+    }
 }
