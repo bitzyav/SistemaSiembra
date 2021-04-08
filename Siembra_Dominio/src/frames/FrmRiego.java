@@ -134,6 +134,11 @@ public class FrmRiego extends javax.swing.JFrame {
         btnCancelar.setFont(new java.awt.Font("Ebrima", 1, 14)); // NOI18N
         btnCancelar.setForeground(new java.awt.Color(255, 255, 255));
         btnCancelar.setText("Cancelar");
+        btnCancelar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCancelarActionPerformed(evt);
+            }
+        });
 
         btnRegistrar.setBackground(new java.awt.Color(51, 51, 51));
         btnRegistrar.setFont(new java.awt.Font("Ebrima", 1, 14)); // NOI18N
@@ -528,14 +533,16 @@ public class FrmRiego extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnRegistrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRegistrarActionPerformed
-        if (this.txtId.getText().equals("")) {
-            this.registrarRiego();
-        } else {
-            this.actualizarRiego();
-        }
-
-        this.obtenerRiegos();
-        this.limpiarFormulario();
+        if (tblHectareasSelec.getRowCount() != 0) {
+            if (this.txtId.getText().equals("")) {
+                this.registrarRiego();
+            } else {
+                this.actualizarRiego();
+            }
+            this.obtenerRiegos();
+            this.limpiarFormulario();
+        }else
+            JOptionPane.showMessageDialog(this, "Seleccione al menos una hectárea.", "Advertencia", JOptionPane.ERROR_MESSAGE);
     }//GEN-LAST:event_btnRegistrarActionPerformed
 
     private void tblHectareasMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblHectareasMouseClicked
@@ -569,6 +576,12 @@ public class FrmRiego extends javax.swing.JFrame {
         this.cambiarEstadoRiego();
         this.obtenerRiegos();
     }//GEN-LAST:event_btnAceptarActionPerformed
+
+    private void btnCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelarActionPerformed
+        //debe de ir hacia el menu
+        //no va el limpiar solo lo use para pruebas
+        this.limpiarFormulario();
+    }//GEN-LAST:event_btnCancelarActionPerformed
 
     /**
      * @param args the command line arguments
@@ -615,22 +628,8 @@ public class FrmRiego extends javax.swing.JFrame {
         riego.setFechaHora(fecha);
         riego.setObservaciones(txtaObservaciones.getText());
         riego.setNombreEmpleado(txtNombreEmpleado.getText());
-        //mexicanada, no intentar en casa
-        if (cboxTipoRiego.getSelectedItem().toString().equals("Presiembra")) {
-            riego.setTipoRiego(TipoRiego.PRE_SIEMBRA);
-        }
-        if (cboxTipoRiego.getSelectedItem().toString().equals("Primer auxilio")) {
-            riego.setTipoRiego(TipoRiego.PRIMER_AUXILIO);
-        }
-        if (cboxTipoRiego.getSelectedItem().toString().equals("Segundo auxilio")) {
-            riego.setTipoRiego(TipoRiego.SEGUNDO_AUXILIO);
-        }
-        if (cboxTipoRiego.getSelectedItem().toString().equals("Tercer auxilio")) {
-            riego.setTipoRiego(TipoRiego.TERCER_AUXILIO);
-        }
-        if (cboxTipoRiego.getSelectedItem().toString().equals("Cuarto auxilio")) {
-            riego.setTipoRiego(TipoRiego.CUARTO_AUXILIO);
-        }
+        riego.setTipoRiego(this.setTipoRiego());
+
         for (int i = 0; i < tblHectareasSelec.getRowCount(); i++) {
             Integer idHectarea = (Integer) tblHectareasSelec.getValueAt(i, 0);
             Hectarea hectarea = this.control.getHectareaRepository().buscarPorID(idHectarea);
@@ -638,20 +637,20 @@ public class FrmRiego extends javax.swing.JFrame {
         }
         entidades.add(riego);
 
-        DetalleRiegos detalle = new DetalleRiegos();
-        for (int i = 0; i < tblHectareasSelec.getRowCount(); i++) {
-
-            Integer idHectarea = (Integer) tblHectareasSelec.getValueAt(i, 0);
-            detalle.setHectarea(control.getHectareaRepository().buscarPorID(idHectarea));
-            detalle.setFechaHora((Date) riego.getFechaHora());
-            detalle.setNombreEmpleado(riego.getNombreEmpleado());
-            detalle.setRiego(riego);
-            riego.agregarHectarea(detalle);
-
-        }
-        entidades.add(detalle);
+//        DetalleRiegos detalle = new DetalleRiegos();
+//        for (int i = 0; i < tblHectareasSelec.getRowCount(); i++) {
+//
+//            Integer idHectarea = (Integer) tblHectareasSelec.getValueAt(i, 0);
+//            detalle.setHectarea(control.getHectareaRepository().buscarPorID(idHectarea));
+//            detalle.setFechaHora((Date) riego.getFechaHora());
+//            detalle.setNombreEmpleado(riego.getNombreEmpleado());
+//            detalle.setRiego(riego);
+//            riego.agregarHectarea(detalle);
+//
+//        }
+//        entidades.add(detalle);
         if (control.getRiegoRepository().guardar(entidades)) {
-            JOptionPane.showMessageDialog(this, "El riego ha sido registrado",
+            JOptionPane.showMessageDialog(this, "El riego ha sido registrado.",
                     "Registrado", JOptionPane.INFORMATION_MESSAGE);
         }
 
@@ -661,24 +660,8 @@ public class FrmRiego extends javax.swing.JFrame {
         Riego riego = control.getRiegoRepository().buscarPorID(Integer.parseInt(txtId.getText()));
         riego.setNombreEmpleado(txtNombreEmpleado.getText());
         riego.setCapacidadAgua(Integer.parseInt(txtCapacidadAgua.getText()));
-
         riego.setObservaciones(txtaObservaciones.getText());
-
-        if (cboxTipoRiego.getSelectedItem().toString().equals("Presiembra")) {
-            riego.setTipoRiego(TipoRiego.PRE_SIEMBRA);
-        }
-        if (cboxTipoRiego.getSelectedItem().toString().equals("Primer auxilio")) {
-            riego.setTipoRiego(TipoRiego.PRIMER_AUXILIO);
-        }
-        if (cboxTipoRiego.getSelectedItem().toString().equals("Segundo auxilio")) {
-            riego.setTipoRiego(TipoRiego.SEGUNDO_AUXILIO);
-        }
-        if (cboxTipoRiego.getSelectedItem().toString().equals("Tercer auxilio")) {
-            riego.setTipoRiego(TipoRiego.TERCER_AUXILIO);
-        }
-        if (cboxTipoRiego.getSelectedItem().toString().equals("Cuarto auxilio")) {
-            riego.setTipoRiego(TipoRiego.CUARTO_AUXILIO);
-        }
+        riego.setTipoRiego(this.setTipoRiego());
 
         if (this.control.getRiegoRepository().actualizar(riego)) {
             JOptionPane.showMessageDialog(this, "Riego actualizado con éxito.",
@@ -717,19 +700,7 @@ public class FrmRiego extends javax.swing.JFrame {
             DefaultTableModel modelo = (DefaultTableModel) this.tblRiegos.getModel();
             Integer idRiego = (Integer) modelo.getValueAt(fila, 0);
             Riego riego = control.getRiegoRepository().buscarPorID(idRiego);
-            
-            if (cboxEstado.getSelectedItem().toString().equals("En espera")) {
-                riego.setEstado(EstadoProceso.EN_ESPERA);
-            }
-            if (cboxEstado.getSelectedItem().toString().equals("Iniciado")) {
-                riego.setEstado(EstadoProceso.INICIADO);
-            }
-            if (cboxEstado.getSelectedItem().toString().equals("En proceso")) {
-                riego.setEstado(EstadoProceso.EN_PROCESO);
-            }
-            if (cboxEstado.getSelectedItem().toString().equals("Finalizado")) {
-                riego.setEstado(EstadoProceso.FINALIZADO);
-            }
+            riego.setEstado(this.setEstadoProceso());
             if (control.getRiegoRepository().actualizar(riego)) {
                 JOptionPane.showMessageDialog(this, "Estado actualizado correctamente.",
                         "Información", JOptionPane.INFORMATION_MESSAGE);
@@ -758,8 +729,8 @@ public class FrmRiego extends javax.swing.JFrame {
                 hectarea.getUbicacionPredio()});
 
         } else {
-//            JOptionPane.showMessageDialog(this, "El producto ya está en "
-//                    + "tu carrito.", "Información", JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Ya has seleccionado esa hectárea.",
+                    "Advertencia", JOptionPane.WARNING_MESSAGE);
         }
     }
 
@@ -795,6 +766,41 @@ public class FrmRiego extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(this, "Sin resultados.",
                     "Información", JOptionPane.INFORMATION_MESSAGE);
         }
+    }
+
+    public TipoRiego setTipoRiego() {
+        if (cboxTipoRiego.getSelectedItem().toString().equals("Presiembra")) {
+            return TipoRiego.PRE_SIEMBRA;
+        }
+        if (cboxTipoRiego.getSelectedItem().toString().equals("Primer auxilio")) {
+            return TipoRiego.PRIMER_AUXILIO;
+        }
+        if (cboxTipoRiego.getSelectedItem().toString().equals("Segundo auxilio")) {
+            return TipoRiego.SEGUNDO_AUXILIO;
+        }
+        if (cboxTipoRiego.getSelectedItem().toString().equals("Tercer auxilio")) {
+            return TipoRiego.TERCER_AUXILIO;
+        }
+        if (cboxTipoRiego.getSelectedItem().toString().equals("Cuarto auxilio")) {
+            return TipoRiego.CUARTO_AUXILIO;
+        }
+        return null;
+    }
+
+    public EstadoProceso setEstadoProceso() {
+        if (cboxEstado.getSelectedItem().toString().equals("En espera")) {
+            return EstadoProceso.EN_ESPERA;
+        }
+        if (cboxEstado.getSelectedItem().toString().equals("Iniciado")) {
+            return EstadoProceso.INICIADO;
+        }
+        if (cboxEstado.getSelectedItem().toString().equals("En proceso")) {
+            return EstadoProceso.EN_PROCESO;
+        }
+        if (cboxEstado.getSelectedItem().toString().equals("Finalizado")) {
+            return EstadoProceso.FINALIZADO;
+        }
+        return null;
     }
 
     public void cargarRiego() {
