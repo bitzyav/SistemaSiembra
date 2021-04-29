@@ -16,9 +16,10 @@ import javax.persistence.criteria.CriteriaQuery;
  *
  * @author Bitzy
  */
-public class HectareaRepository extends BaseRepository<Hectarea>{
+public class HectareaRepository extends BaseRepository<Hectarea> {
+
     EntityManager entityManager = this.createEntityManager();
-    
+
     @Override
     public boolean guardar(List<Object> lista) {
         entityManager.getTransaction().begin();
@@ -75,12 +76,17 @@ public class HectareaRepository extends BaseRepository<Hectarea>{
         entityManager.close();
         return hectareas;
     }
-    
+
     @Override
     public Hectarea buscarPorID(Integer id) {
         entityManager.getTransaction().begin();
         Hectarea hectarea = entityManager.find(Hectarea.class, id);
         entityManager.getTransaction().commit();
         return hectarea;
-    }    
+    }
+
+  
+    
+
+  
 }

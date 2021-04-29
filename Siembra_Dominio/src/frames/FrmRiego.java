@@ -6,16 +6,17 @@
 package frames;
 
 import Controller.BaseController;
-import Repository.HectareaRepository;
-import Repository.RiegoRepository;
 import dominio.DetalleRiegos;
 import dominio.EstadoProceso;
 import dominio.Hectarea;
 import dominio.Riego;
 import dominio.TipoRiego;
+import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import javax.swing.JComboBox;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
@@ -27,6 +28,7 @@ import javax.swing.table.DefaultTableModel;
 public class FrmRiego extends javax.swing.JFrame {
 
     BaseController control;
+    int limiteCaracteresNombre = 200;
 
     /**
      * Creates new form FrmRiego
@@ -56,7 +58,7 @@ public class FrmRiego extends javax.swing.JFrame {
         txtId = new javax.swing.JTextField();
         jLabel8 = new javax.swing.JLabel();
         jScrollPane2 = new javax.swing.JScrollPane();
-        txtaObservaciones = new javax.swing.JTextArea();
+        txtObservaciones = new javax.swing.JTextArea();
         btnCancelar = new javax.swing.JButton();
         btnRegistrar = new javax.swing.JButton();
         jLabel12 = new javax.swing.JLabel();
@@ -69,6 +71,7 @@ public class FrmRiego extends javax.swing.JFrame {
         btnBuscarHectareas = new javax.swing.JButton();
         txtBuscarHectareas = new javax.swing.JTextField();
         jLabel7 = new javax.swing.JLabel();
+        btnRefrescarHectareas = new javax.swing.JButton();
         jPanel6 = new javax.swing.JPanel();
         jScrollPane4 = new javax.swing.JScrollPane();
         tblHectareasSelec = new javax.swing.JTable();
@@ -83,7 +86,8 @@ public class FrmRiego extends javax.swing.JFrame {
         btnAceptar = new javax.swing.JButton();
         jLabel11 = new javax.swing.JLabel();
         cboxEstado = new javax.swing.JComboBox<>();
-        cboxCultivoBuscar = new javax.swing.JComboBox<>();
+        cboxRiegoBuscar = new javax.swing.JComboBox<>();
+        btnRefrescarRiegos = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Gestionar Control de Riego de Cultivo");
@@ -126,9 +130,14 @@ public class FrmRiego extends javax.swing.JFrame {
         jLabel8.setForeground(new java.awt.Color(51, 51, 51));
         jLabel8.setText("Observaciones");
 
-        txtaObservaciones.setColumns(20);
-        txtaObservaciones.setRows(5);
-        jScrollPane2.setViewportView(txtaObservaciones);
+        txtObservaciones.setColumns(20);
+        txtObservaciones.setRows(5);
+        txtObservaciones.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                txtObservacionesKeyTyped(evt);
+            }
+        });
+        jScrollPane2.setViewportView(txtObservaciones);
 
         btnCancelar.setBackground(new java.awt.Color(51, 51, 51));
         btnCancelar.setFont(new java.awt.Font("Ebrima", 1, 14)); // NOI18N
@@ -162,6 +171,14 @@ public class FrmRiego extends javax.swing.JFrame {
         jLabel13.setText("Capacidad de agua");
 
         txtCapacidadAgua.setFont(new java.awt.Font("Ebrima", 0, 14)); // NOI18N
+        txtCapacidadAgua.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                txtCapacidadAguaKeyPressed(evt);
+            }
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                txtCapacidadAguaKeyTyped(evt);
+            }
+        });
 
         jPanel5.setBackground(new java.awt.Color(255, 255, 255));
         jPanel5.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(83, 57, 43)), "Lista de hectáreas", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.TOP, new java.awt.Font("Ebrima", 1, 14), new java.awt.Color(51, 51, 51))); // NOI18N
@@ -197,6 +214,11 @@ public class FrmRiego extends javax.swing.JFrame {
         btnBuscarHectareas.setFont(new java.awt.Font("Ebrima", 1, 12)); // NOI18N
         btnBuscarHectareas.setForeground(new java.awt.Color(255, 255, 255));
         btnBuscarHectareas.setText("Buscar");
+        btnBuscarHectareas.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnBuscarHectareasActionPerformed(evt);
+            }
+        });
 
         txtBuscarHectareas.setFont(new java.awt.Font("Ebrima", 0, 12)); // NOI18N
 
@@ -204,20 +226,32 @@ public class FrmRiego extends javax.swing.JFrame {
         jLabel7.setForeground(new java.awt.Color(51, 51, 51));
         jLabel7.setText("Bloque");
 
+        btnRefrescarHectareas.setBackground(new java.awt.Color(51, 51, 51));
+        btnRefrescarHectareas.setFont(new java.awt.Font("Ebrima", 1, 12)); // NOI18N
+        btnRefrescarHectareas.setForeground(new java.awt.Color(255, 255, 255));
+        btnRefrescarHectareas.setText("Refrescar");
+        btnRefrescarHectareas.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnRefrescarHectareasActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
         jPanel5.setLayout(jPanel5Layout);
         jPanel5Layout.setHorizontalGroup(
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel5Layout.createSequentialGroup()
                 .addGap(42, 42, 42)
-                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 589, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(jPanel5Layout.createSequentialGroup()
                         .addComponent(jLabel7)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(txtBuscarHectareas, javax.swing.GroupLayout.PREFERRED_SIZE, 271, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
-                        .addComponent(btnBuscarHectareas)))
+                        .addComponent(btnBuscarHectareas)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(btnRefrescarHectareas)))
                 .addContainerGap(44, Short.MAX_VALUE))
         );
         jPanel5Layout.setVerticalGroup(
@@ -225,7 +259,9 @@ public class FrmRiego extends javax.swing.JFrame {
             .addGroup(jPanel5Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(btnBuscarHectareas)
+                    .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(btnBuscarHectareas)
+                        .addComponent(btnRefrescarHectareas))
                     .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(jLabel7)
                         .addComponent(txtBuscarHectareas, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
@@ -286,6 +322,11 @@ public class FrmRiego extends javax.swing.JFrame {
         jLabel14.setText("Nombre del empleado");
 
         txtNombreEmpleado.setFont(new java.awt.Font("Ebrima", 0, 14)); // NOI18N
+        txtNombreEmpleado.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                txtNombreEmpleadoKeyTyped(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
@@ -413,12 +454,17 @@ public class FrmRiego extends javax.swing.JFrame {
 
         jLabel10.setFont(new java.awt.Font("Ebrima", 0, 14)); // NOI18N
         jLabel10.setForeground(new java.awt.Color(51, 51, 51));
-        jLabel10.setText("Filtrar por Cultivo");
+        jLabel10.setText("Filtrar por Tipo Riego");
 
         btnBuscar.setBackground(new java.awt.Color(51, 51, 51));
         btnBuscar.setFont(new java.awt.Font("Ebrima", 1, 14)); // NOI18N
         btnBuscar.setForeground(new java.awt.Color(255, 255, 255));
         btnBuscar.setText("Buscar");
+        btnBuscar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnBuscarActionPerformed(evt);
+            }
+        });
 
         btnEliminar.setBackground(new java.awt.Color(51, 51, 51));
         btnEliminar.setFont(new java.awt.Font("Ebrima", 1, 14)); // NOI18N
@@ -447,8 +493,19 @@ public class FrmRiego extends javax.swing.JFrame {
         cboxEstado.setFont(new java.awt.Font("Ebrima", 0, 14)); // NOI18N
         cboxEstado.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Seleccione...", "En espera", "Iniciado", "En proceso", "Finalizado" }));
 
-        cboxCultivoBuscar.setFont(new java.awt.Font("Ebrima", 0, 14)); // NOI18N
-        cboxCultivoBuscar.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Seleccione...", "Trigo", "Garbanzo", "Maiz", "Soya" }));
+        cboxRiegoBuscar.setFont(new java.awt.Font("Ebrima", 0, 14)); // NOI18N
+        cboxRiegoBuscar.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Seleccione...", "Presiembra", "Primer auxilio", "Segundo auxilio", "Tercer auxilio", "Cuarto auxilio" }));
+
+        btnRefrescarRiegos.setBackground(new java.awt.Color(51, 51, 51));
+        btnRefrescarRiegos.setFont(new java.awt.Font("Ebrima", 1, 14)); // NOI18N
+        btnRefrescarRiegos.setForeground(new java.awt.Color(255, 255, 255));
+        btnRefrescarRiegos.setText("Refrescar");
+        btnRefrescarRiegos.setActionCommand("Refrescar");
+        btnRefrescarRiegos.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnRefrescarRiegosActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
         jPanel4.setLayout(jPanel4Layout);
@@ -468,9 +525,11 @@ public class FrmRiego extends javax.swing.JFrame {
                     .addGroup(jPanel4Layout.createSequentialGroup()
                         .addComponent(jLabel10)
                         .addGap(18, 18, 18)
-                        .addComponent(cboxCultivoBuscar, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(cboxRiegoBuscar, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(28, 28, 28)
-                        .addComponent(btnBuscar))
+                        .addComponent(btnBuscar)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(btnRefrescarRiegos))
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 1093, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(40, Short.MAX_VALUE))
         );
@@ -480,8 +539,9 @@ public class FrmRiego extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel10)
-                    .addComponent(cboxCultivoBuscar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnBuscar))
+                    .addComponent(cboxRiegoBuscar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnBuscar)
+                    .addComponent(btnRefrescarRiegos))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 152, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(23, 23, 23)
@@ -533,16 +593,22 @@ public class FrmRiego extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnRegistrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRegistrarActionPerformed
-        if (tblHectareasSelec.getRowCount() != 0) {
-            if (this.txtId.getText().equals("")) {
-                this.registrarRiego();
+        if (validarEspaciosEnBlanco()) {
+            if (tblHectareasSelec.getRowCount() != 0) {
+                if (this.txtId.getText().equals("")) {
+                    this.registrarRiego();
+                } else {
+                    this.actualizarRiego();
+                }
+                this.obtenerRiegos();
+                this.limpiarFormulario();
             } else {
-                this.actualizarRiego();
+                JOptionPane.showMessageDialog(this, "Seleccione al menos una hectárea.", "Advertencia", JOptionPane.ERROR_MESSAGE);
             }
-            this.obtenerRiegos();
-            this.limpiarFormulario();
-        }else
-            JOptionPane.showMessageDialog(this, "Seleccione al menos una hectárea.", "Advertencia", JOptionPane.ERROR_MESSAGE);
+        } else {
+            JOptionPane.showMessageDialog(this, "Revice que alguno de sus campos no este vacio.",
+                    "Campo vacio", JOptionPane.INFORMATION_MESSAGE);
+        }
     }//GEN-LAST:event_btnRegistrarActionPerformed
 
     private void tblHectareasMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblHectareasMouseClicked
@@ -583,6 +649,117 @@ public class FrmRiego extends javax.swing.JFrame {
         this.limpiarFormulario();
     }//GEN-LAST:event_btnCancelarActionPerformed
 
+    private void btnBuscarHectareasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBuscarHectareasActionPerformed
+        List<Hectarea> hectareas = control.getHectareaRepository().buscarTodos();
+        List<Hectarea> hectareasEncontradas = new ArrayList();
+        for (int i = 0; i < hectareas.size(); i++) {
+            if (hectareas.get(i).getBloque().equalsIgnoreCase(txtBuscarHectareas.getText())) {
+                hectareasEncontradas.add(hectareas.get(i));
+            }
+        }
+        if (hectareasEncontradas != null) {
+            DefaultTableModel modelo = (DefaultTableModel) tblHectareas.getModel();
+            modelo.setRowCount(0);
+            for (Hectarea hectarea : hectareasEncontradas) {
+                modelo.addRow(hectarea.toArray());
+            }
+        } else {
+            DefaultTableModel modelo = (DefaultTableModel) tblHectareas.getModel();
+            modelo.setRowCount(0);
+        }
+    }//GEN-LAST:event_btnBuscarHectareasActionPerformed
+
+    private void txtCapacidadAguaKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtCapacidadAguaKeyPressed
+
+
+    }//GEN-LAST:event_txtCapacidadAguaKeyPressed
+
+    private void txtCapacidadAguaKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtCapacidadAguaKeyTyped
+        if (!Character.isDigit(evt.getKeyChar()) && evt.getKeyChar() != KeyEvent.VK_BACK_SPACE) {
+            JOptionPane.showMessageDialog(this, "Solo se permiten números en este campo de texto.",
+                    "Campo invalido", JOptionPane.INFORMATION_MESSAGE);
+            evt.consume();
+        }
+    }//GEN-LAST:event_txtCapacidadAguaKeyTyped
+
+    private void txtNombreEmpleadoKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtNombreEmpleadoKeyTyped
+        if (!Character.isLetter(evt.getKeyChar()) && evt.getKeyChar() != KeyEvent.VK_BACK_SPACE
+                && evt.getKeyChar() != KeyEvent.VK_SPACE
+                && evt.getKeyChar() != KeyEvent.VK_COPY
+                && evt.getKeyChar() != KeyEvent.VK_ENTER) {
+
+            JOptionPane.showMessageDialog(this, "Solo se permiten letras en este campo de texto.",
+                    "Campo invalido", JOptionPane.INFORMATION_MESSAGE);
+            evt.consume();
+        }
+        if (txtNombreEmpleado.getText().length() >= 200) {
+            JOptionPane.showMessageDialog(this, "Se ha alcanzado el maximo de caracteres permitidos (200).",
+                    "Campo invalido", JOptionPane.INFORMATION_MESSAGE);
+            evt.consume();
+
+        }
+    }//GEN-LAST:event_txtNombreEmpleadoKeyTyped
+
+    private void txtObservacionesKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtObservacionesKeyTyped
+        if (txtObservaciones.getText().length() >= 200) {
+            JOptionPane.showMessageDialog(this, "Se ha alcanzado el maximo de caracteres permitidos (200).",
+                    "Campo invalido", JOptionPane.INFORMATION_MESSAGE);
+            evt.consume();
+
+        }
+    }//GEN-LAST:event_txtObservacionesKeyTyped
+
+    private void btnRefrescarHectareasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRefrescarHectareasActionPerformed
+        obtenerHectareas();
+    }//GEN-LAST:event_btnRefrescarHectareasActionPerformed
+
+    private void btnBuscarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBuscarActionPerformed
+        List<Riego> riegos = control.getRiegoRepository().buscarTodos();
+        List<Riego> riegosEncontrados = new ArrayList<>();
+        String tipoRiego;
+        // Convierte el itemSeleccionado al nombre del Enum 
+        switch (cboxRiegoBuscar.getSelectedItem().toString()) {
+            case "Presiembra":
+                tipoRiego = TipoRiego.PRE_SIEMBRA.name();
+                break;
+            case "Primer auxilio":
+                tipoRiego = TipoRiego.PRIMER_AUXILIO.name();
+                break;
+            case "Segundo auxilio":
+                tipoRiego = TipoRiego.SEGUNDO_AUXILIO.name();
+                break;
+            case "Tercer auxilio":
+                tipoRiego = TipoRiego.TERCER_AUXILIO.name();
+                break;
+            case "Cuarto auxilio":
+                tipoRiego = TipoRiego.CUARTO_AUXILIO.name();
+                break;
+            default:
+                throw new AssertionError();
+        }
+        for (int i = 0; i < riegos.size(); i++) {
+            if (riegos.get(i).getTipoRiego().name().equalsIgnoreCase(tipoRiego)) {
+                riegosEncontrados.add(riegos.get(i));
+            }
+        }
+        if (riegosEncontrados != null) {
+            DefaultTableModel modelo = (DefaultTableModel) tblRiegos.getModel();
+            modelo.setRowCount(0);
+            for (Riego riego : riegosEncontrados) {
+                modelo.addRow(riego.toArray());
+            }
+        } else {
+            DefaultTableModel modelo = (DefaultTableModel) tblRiegos.getModel();
+            modelo.setRowCount(0);
+            JOptionPane.showMessageDialog(this, "Sin resultados.",
+                    "Información", JOptionPane.INFORMATION_MESSAGE);
+        }
+    }//GEN-LAST:event_btnBuscarActionPerformed
+
+    private void btnRefrescarRiegosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRefrescarRiegosActionPerformed
+        obtenerRiegos();
+    }//GEN-LAST:event_btnRefrescarRiegosActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -619,6 +796,31 @@ public class FrmRiego extends javax.swing.JFrame {
         });
     }
 
+    public boolean campoSinNumeros(String cadena) {
+        Pattern pat = Pattern.compile("[0..9]");
+        Matcher mat = pat.matcher(cadena);
+        if (mat.matches()) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     *
+     * @return
+     */
+    public boolean validarEspaciosEnBlanco() {
+        if (!txtNombreEmpleado.getText().trim().isEmpty()
+                && !txtCapacidadAgua.getText().trim().isEmpty()
+                && !txtObservaciones.getText().trim().isEmpty()
+                && !cboxTipoRiego.getSelectedItem().equals("Seleccione...")) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     public void registrarRiego() {
         List<Object> entidades = new ArrayList<>();
         Riego riego = new Riego();
@@ -626,7 +828,7 @@ public class FrmRiego extends javax.swing.JFrame {
         riego.setCapacidadAgua(Integer.parseInt(txtCapacidadAgua.getText()));
         riego.setEstado(EstadoProceso.EN_ESPERA);
         riego.setFechaHora(fecha);
-        riego.setObservaciones(txtaObservaciones.getText());
+        riego.setObservaciones(txtObservaciones.getText());
         riego.setNombreEmpleado(txtNombreEmpleado.getText());
         riego.setTipoRiego(this.setTipoRiego());
 
@@ -660,7 +862,7 @@ public class FrmRiego extends javax.swing.JFrame {
         Riego riego = control.getRiegoRepository().buscarPorID(Integer.parseInt(txtId.getText()));
         riego.setNombreEmpleado(txtNombreEmpleado.getText());
         riego.setCapacidadAgua(Integer.parseInt(txtCapacidadAgua.getText()));
-        riego.setObservaciones(txtaObservaciones.getText());
+        riego.setObservaciones(txtObservaciones.getText());
         riego.setTipoRiego(this.setTipoRiego());
 
         if (this.control.getRiegoRepository().actualizar(riego)) {
@@ -816,7 +1018,7 @@ public class FrmRiego extends javax.swing.JFrame {
                 txtId.setText((riego.getId().toString()));
                 txtCapacidadAgua.setText(String.valueOf(riego.getCapacidadAgua()));
                 txtNombreEmpleado.setText(riego.getNombreEmpleado());
-                txtaObservaciones.setText(riego.getObservaciones());
+                txtObservaciones.setText(riego.getObservaciones());
                 //OTRA MEXICANADA AJUA
                 if (riego.getTipoRiego().equals(TipoRiego.PRE_SIEMBRA)) {
                     cboxTipoRiego.setSelectedIndex(1);
@@ -853,7 +1055,7 @@ public class FrmRiego extends javax.swing.JFrame {
         txtId.setText("");
         txtCapacidadAgua.setText("");
         txtNombreEmpleado.setText("");
-        txtaObservaciones.setText("");
+        txtObservaciones.setText("");
         cboxTipoRiego.setSelectedIndex(0);
         DefaultTableModel modeloSeleccionados = (DefaultTableModel) tblHectareasSelec.getModel();
         modeloSeleccionados.setRowCount(0);
@@ -864,9 +1066,11 @@ public class FrmRiego extends javax.swing.JFrame {
     private javax.swing.JButton btnBuscarHectareas;
     private javax.swing.JButton btnCancelar;
     private javax.swing.JButton btnEliminar;
+    private javax.swing.JButton btnRefrescarHectareas;
+    private javax.swing.JButton btnRefrescarRiegos;
     private javax.swing.JButton btnRegistrar;
-    private javax.swing.JComboBox<String> cboxCultivoBuscar;
     private javax.swing.JComboBox<String> cboxEstado;
+    private javax.swing.JComboBox<String> cboxRiegoBuscar;
     private javax.swing.JComboBox<String> cboxTipoRiego;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
@@ -894,6 +1098,6 @@ public class FrmRiego extends javax.swing.JFrame {
     private javax.swing.JTextField txtCapacidadAgua;
     private javax.swing.JTextField txtId;
     private javax.swing.JTextField txtNombreEmpleado;
-    private javax.swing.JTextArea txtaObservaciones;
+    private javax.swing.JTextArea txtObservaciones;
     // End of variables declaration//GEN-END:variables
 }
