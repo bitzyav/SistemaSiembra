@@ -716,7 +716,7 @@ public class FrmRiego extends javax.swing.JFrame {
     private void btnBuscarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBuscarActionPerformed
         List<Riego> riegos = control.getRiegoRepository().buscarTodos();
         List<Riego> riegosEncontrados = new ArrayList<>();
-        String tipoRiego;
+        String tipoRiego = null;
         // Convierte el itemSeleccionado al nombre del Enum 
         switch (cboxRiegoBuscar.getSelectedItem().toString()) {
             case "Presiembra":
@@ -735,7 +735,9 @@ public class FrmRiego extends javax.swing.JFrame {
                 tipoRiego = TipoRiego.CUARTO_AUXILIO.name();
                 break;
             default:
-                throw new AssertionError();
+                 JOptionPane.showMessageDialog(this, "No ha seleccionado un tipo de riego",
+                    "Información", JOptionPane.INFORMATION_MESSAGE);
+                 return;
         }
         for (int i = 0; i < riegos.size(); i++) {
             if (riegos.get(i).getTipoRiego().name().equalsIgnoreCase(tipoRiego)) {
