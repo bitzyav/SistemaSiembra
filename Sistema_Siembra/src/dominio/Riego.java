@@ -6,6 +6,7 @@
 package dominio;
 
 import java.io.Serializable;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -179,5 +180,17 @@ public class Riego implements Serializable {
             this.getEstado()
         };
     }
+    
+    
+    public Object[] toArrayPrint() {
+        return new Object[]{
+            new SimpleDateFormat("yyyy-MM-dd").format(this.getFechaHora()),
+            this.getObservaciones(),
+            this.getEstado(),
+            this.getNombreEmpleado()
+        };
+    }
+    
+    
 }
     

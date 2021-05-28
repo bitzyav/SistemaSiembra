@@ -7,6 +7,7 @@ package Repository;
 
 import dominio.Hectarea;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
@@ -20,10 +21,15 @@ public class HectareaRepository extends BaseRepository<Hectarea> {
 
     EntityManager entityManager = this.createEntityManager();
 
+    /**
+     *
+     * @param lista
+     * @return
+     */
     @Override
-    public boolean guardar(List<Object> lista) {
+    public boolean guardar(List<Hectarea> lista) {
         entityManager.getTransaction().begin();
-        for (Object object : lista) {
+        for (Hectarea object : lista) {
             entityManager.persist(object);
         }
 
@@ -37,8 +43,11 @@ public class HectareaRepository extends BaseRepository<Hectarea> {
         Hectarea hectarea = entityManager.find(Hectarea.class, actualizado.getId());
         if (hectarea != null) {
             hectarea.setBloque(actualizado.getBloque());
-            hectarea.setUbicacionPredio(actualizado.getUbicacionPredio());
             hectarea.setRiegos(actualizado.getRiegos());
+            hectarea.setTipoHectarea(actualizado.getTipoHectarea());
+            hectarea.setLote(actualizado.getLote());
+            hectarea.setCoordenadas(actualizado.getCoordenadas());
+            hectarea.setArrendatario(actualizado.getArrendatario());
 
             entityManager.merge(hectarea);
             entityManager.getTransaction().commit();
@@ -84,6 +93,41 @@ public class HectareaRepository extends BaseRepository<Hectarea> {
         entityManager.getTransaction().commit();
         return hectarea;
     }
+    
+    
+    public List<Hectarea> buscarHectPropia(String tipo) {
+        entityManager.getTransaction().begin();
+        CriteriaQuery criteria = entityManager.getCriteriaBuilder().createQuery();
+        criteria.select(criteria.from(Hectarea.class));
+        Query query = entityManager.createQuery(criteria);
+        List<Hectarea> hectareas = new ArrayList<>(query.getResultList());
+        List<Hectarea> coincidencias = new ArrayList<>();
+        
+        for (Hectarea h : hectareas) {
+            if(h.getTipoHectarea().equals(tipo)){
+                coincidencias.add(h);
+            }
+        }
+        return coincidencias;
+    }
+    
+    public List<Hectarea> buscarHectArrendada(String tipo) {
+        entityManager.getTransaction().begin();
+        CriteriaQuery criteria = entityManager.getCriteriaBuilder().createQuery();
+        criteria.select(criteria.from(Hectarea.class));
+        Query query = entityManager.createQuery(criteria);
+        List<Hectarea> hectareas = new ArrayList<>(query.getResultList());
+        List<Hectarea> coincidencias = new ArrayList<>();
+        
+        for (Hectarea h : hectareas) {
+            if(h.getTipoHectarea().equals(tipo)){
+                coincidencias.add(h);
+            }
+        }
+        return coincidencias;
+    }
+    
+    
 
   
     

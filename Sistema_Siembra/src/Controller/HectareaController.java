@@ -20,7 +20,7 @@ public class HectareaController {
     private final HectareaRepository hectareaRepository = control.getHectareaRepository();
     
     
-    public boolean guardarHectarea(List<Object> lista) {
+    public boolean guardarHectarea(List<Hectarea> lista) {
         return this.hectareaRepository.guardar(lista);
     }
 
@@ -32,11 +32,21 @@ public class HectareaController {
         return this.hectareaRepository.eliminar(idHectarea);
     }
 
-    public Hectarea obtenerHectareaPorId(Integer idHectarea) {
+    public Hectarea buscarHectareaPorId(Integer idHectarea) {
         return this.hectareaRepository.buscarPorID(idHectarea);
     }
 
-    public List<Hectarea> obtenerHectareas() {
+    public List<Hectarea>buscarHectareas() {
         return this.hectareaRepository.buscarTodos();
     }
+    
+    public List<Hectarea> buscarHectPropia(String tipo) {
+        return this.hectareaRepository.buscarHectPropia(tipo);
+    }
+    
+    public List<Hectarea> buscarHectArrendada(String tipo) {
+        return this.hectareaRepository.buscarHectArrendada(tipo);
+    }
+
+
 }

@@ -5,17 +5,28 @@
  */
 package frames;
 
+import Controller.BaseController;
+import dominio.Riego;
+import java.text.MessageFormat;
+import java.util.Date;
+import java.util.List;
+import javax.swing.JOptionPane;
+import javax.swing.JTable;
+import javax.swing.table.DefaultTableModel;
+
 /**
  *
  * @author Sebas
  */
 public class FrmImprimirReporte extends javax.swing.JFrame {
-
+    BaseController control;
     /**
      * Creates new form FrmImprimirReporte2
      */
     public FrmImprimirReporte() {
         initComponents();
+        control = new BaseController();
+        obtenerRiegos();
     }
 
     /**
@@ -27,33 +38,20 @@ public class FrmImprimirReporte extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jRadioButton1 = new javax.swing.JRadioButton();
-        jRadioButton2 = new javax.swing.JRadioButton();
-        jRadioButton3 = new javax.swing.JRadioButton();
         jPanel2 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
-        btnRegistrar = new javax.swing.JButton();
-        btnRegistrar1 = new javax.swing.JButton();
-        jLabel2 = new javax.swing.JLabel();
-        jComboBox1 = new javax.swing.JComboBox<>();
-        jDateChooser1 = new com.toedter.calendar.JDateChooser();
+        jPanel1 = new javax.swing.JPanel();
+        jdate = new com.toedter.calendar.JDateChooser();
         jLabel3 = new javax.swing.JLabel();
         jScrollPane12 = new javax.swing.JScrollPane();
-        tblHectareas9 = new javax.swing.JTable();
+        tblRiegos = new javax.swing.JTable();
+        btnRegistrar1 = new javax.swing.JButton();
+        jLabel2 = new javax.swing.JLabel();
+        cboxTipo = new javax.swing.JComboBox<>();
+        btnBuscar = new javax.swing.JButton();
+        btnCancelar = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-
-        jRadioButton1.setFont(new java.awt.Font("Ebrima", 0, 14)); // NOI18N
-        jRadioButton1.setText("Semana pasada");
-        jRadioButton1.setOpaque(false);
-
-        jRadioButton2.setFont(new java.awt.Font("Ebrima", 0, 14)); // NOI18N
-        jRadioButton2.setText("Último mes");
-        jRadioButton2.setOpaque(false);
-
-        jRadioButton3.setFont(new java.awt.Font("Ebrima", 0, 14)); // NOI18N
-        jRadioButton3.setText("Fecha");
-        jRadioButton3.setOpaque(false);
 
         jPanel2.setBackground(new java.awt.Color(51, 51, 51));
 
@@ -78,110 +76,151 @@ public class FrmImprimirReporte extends javax.swing.JFrame {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        btnRegistrar.setBackground(new java.awt.Color(51, 51, 51));
-        btnRegistrar.setFont(new java.awt.Font("Ebrima", 1, 14)); // NOI18N
-        btnRegistrar.setForeground(new java.awt.Color(255, 255, 255));
-        btnRegistrar.setText("Generar reprote");
-        btnRegistrar.setActionCommand("Generar reporte");
-
-        btnRegistrar1.setBackground(new java.awt.Color(51, 51, 51));
-        btnRegistrar1.setFont(new java.awt.Font("Ebrima", 1, 14)); // NOI18N
-        btnRegistrar1.setForeground(new java.awt.Color(255, 255, 255));
-        btnRegistrar1.setText("Imprimir");
-        btnRegistrar1.setActionCommand("Generar reporte");
-
-        jLabel2.setFont(new java.awt.Font("Ebrima", 1, 14)); // NOI18N
-        jLabel2.setForeground(new java.awt.Color(51, 51, 51));
-        jLabel2.setText("Tipo de Proceso:");
-
-        jComboBox1.setFont(new java.awt.Font("Ebrima", 0, 14)); // NOI18N
-        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Seleccione...", "Riego de Cultivo", "Deshierbe", "Fertilización de Cultivo", " " }));
+        jPanel1.setBackground(new java.awt.Color(255, 255, 255));
 
         jLabel3.setFont(new java.awt.Font("Ebrima", 1, 14)); // NOI18N
         jLabel3.setForeground(new java.awt.Color(51, 51, 51));
-        jLabel3.setText("Consultar por:");
+        jLabel3.setText("Consultar por fecha:");
 
         jScrollPane12.setFont(new java.awt.Font("Ebrima", 0, 14)); // NOI18N
 
-        tblHectareas9.setFont(new java.awt.Font("Ebrima", 0, 12)); // NOI18N
-        tblHectareas9.setModel(new javax.swing.table.DefaultTableModel(
+        tblRiegos.setFont(new java.awt.Font("Ebrima", 0, 14)); // NOI18N
+        tblRiegos.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
             },
             new String [] {
-                "Fecha", "Descripción", "Estado", "Persona responsable"
+                "Fecha", "Observaciones", "Estado", "Persona responsable"
             }
         ) {
             boolean[] canEdit = new boolean [] {
-                false, false, true, false
+                false, false, false, false
             };
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
                 return canEdit [columnIndex];
             }
         });
-        jScrollPane12.setViewportView(tblHectareas9);
+        jScrollPane12.setViewportView(tblRiegos);
+
+        btnRegistrar1.setBackground(new java.awt.Color(51, 51, 51));
+        btnRegistrar1.setFont(new java.awt.Font("Ebrima", 1, 14)); // NOI18N
+        btnRegistrar1.setForeground(new java.awt.Color(255, 255, 255));
+        btnRegistrar1.setText("Imprimir reporte");
+        btnRegistrar1.setActionCommand("Generar reporte");
+        btnRegistrar1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnRegistrar1ActionPerformed(evt);
+            }
+        });
+
+        jLabel2.setFont(new java.awt.Font("Ebrima", 1, 14)); // NOI18N
+        jLabel2.setForeground(new java.awt.Color(51, 51, 51));
+        jLabel2.setText("Tipo de Proceso:");
+
+        cboxTipo.setFont(new java.awt.Font("Ebrima", 0, 14)); // NOI18N
+        cboxTipo.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Riego de Cultivo", " " }));
+
+        btnBuscar.setBackground(new java.awt.Color(51, 51, 51));
+        btnBuscar.setFont(new java.awt.Font("Ebrima", 0, 14)); // NOI18N
+        btnBuscar.setForeground(new java.awt.Color(255, 255, 255));
+        btnBuscar.setText("Buscar");
+        btnBuscar.setActionCommand("Generar reporte");
+        btnBuscar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnBuscarActionPerformed(evt);
+            }
+        });
+
+        btnCancelar.setBackground(new java.awt.Color(51, 51, 51));
+        btnCancelar.setFont(new java.awt.Font("Ebrima", 1, 14)); // NOI18N
+        btnCancelar.setForeground(new java.awt.Color(255, 255, 255));
+        btnCancelar.setText("Cancelar");
+        btnCancelar.setActionCommand("Generar reporte");
+        btnCancelar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCancelarActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGap(30, 30, 30)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane12, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 1140, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel2)
+                            .addComponent(cboxTipo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(50, 50, 50)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel3)
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addComponent(jdate, javax.swing.GroupLayout.PREFERRED_SIZE, 156, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
+                                .addComponent(btnBuscar))))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                        .addComponent(btnRegistrar1)
+                        .addGap(58, 58, 58)
+                        .addComponent(btnCancelar)))
+                .addContainerGap(34, Short.MAX_VALUE))
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGap(25, 25, 25)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel2)
+                    .addComponent(jLabel3))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(btnBuscar, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jdate, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(cboxTipo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 34, Short.MAX_VALUE)
+                .addComponent(jScrollPane12, javax.swing.GroupLayout.PREFERRED_SIZE, 583, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(30, 30, 30)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnRegistrar1)
+                    .addComponent(btnCancelar))
+                .addGap(31, 31, 31))
+        );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(btnRegistrar)
-                        .addGap(42, 42, 42)
-                        .addComponent(btnRegistrar1))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jLabel2)
-                                    .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addGap(50, 50, 50)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jLabel3)
-                                    .addGroup(layout.createSequentialGroup()
-                                        .addComponent(jRadioButton1)
-                                        .addGap(28, 28, 28)
-                                        .addComponent(jRadioButton2)
-                                        .addGap(35, 35, 35)
-                                        .addComponent(jRadioButton3)
-                                        .addGap(18, 18, 18)
-                                        .addComponent(jDateChooser1, javax.swing.GroupLayout.PREFERRED_SIZE, 156, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                            .addComponent(jScrollPane12, javax.swing.GroupLayout.PREFERRED_SIZE, 740, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(8, 8, 8)))
-                .addGap(0, 0, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(31, 31, 31)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel2)
-                    .addComponent(jLabel3))
-                .addGap(15, 15, 15)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(jRadioButton1)
-                        .addComponent(jRadioButton2)
-                        .addComponent(jRadioButton3))
-                    .addComponent(jDateChooser1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(30, 30, 30)
-                .addComponent(jScrollPane12, javax.swing.GroupLayout.PREFERRED_SIZE, 361, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(41, 41, 41)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btnRegistrar)
-                    .addComponent(btnRegistrar1))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void btnRegistrar1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRegistrar1ActionPerformed
+        imprimir();
+    }//GEN-LAST:event_btnRegistrar1ActionPerformed
+
+    private void btnBuscarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBuscarActionPerformed
+        obtenerRiegos();
+        jdate.setDate(null);
+    }//GEN-LAST:event_btnBuscarActionPerformed
+
+    private void btnCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelarActionPerformed
+        FrmMenu menu = new FrmMenu();
+        menu.setVisible(true);
+        this.dispose();
+    }//GEN-LAST:event_btnCancelarActionPerformed
 
     /**
      * @param args the command line arguments
@@ -219,19 +258,61 @@ public class FrmImprimirReporte extends javax.swing.JFrame {
         });
     }
 
+    public void obtenerRiegos() {
+        if (jdate.getDate() == null) {
+            List<Riego> riegos = control.getRiegoRepository().buscarTodos();
+            if (riegos != null) {
+                DefaultTableModel modelo = (DefaultTableModel) tblRiegos.getModel();
+                modelo.setRowCount(0);
+                for (Riego riego : riegos) {
+                    modelo.addRow(riego.toArrayPrint());
+                }
+            } else {
+                JOptionPane.showMessageDialog(this, "Sin resultados.",
+                        "Información", JOptionPane.INFORMATION_MESSAGE);
+            }
+        } else {
+            Date fecha = jdate.getDate();
+            List<Riego> riegos = control.getRiegoRepository().buscarPorFecha(fecha);
+            System.out.println(riegos);
+            if (riegos != null && !riegos.isEmpty()) {
+                DefaultTableModel modelo = (DefaultTableModel) tblRiegos.getModel();
+                modelo.setRowCount(0);
+                for (Riego riego : riegos) {
+                    modelo.addRow(riego.toArrayPrint());
+                }
+            } else {
+                JOptionPane.showMessageDialog(this, "Sin resultados.",
+                        "Información", JOptionPane.INFORMATION_MESSAGE);
+            }
+        }
+    }
+
+    public void imprimir() {
+        MessageFormat header = new MessageFormat("Imprimir reporte");
+        MessageFormat footer = new MessageFormat("Page{0,number,integer}");
+
+        try {
+            tblRiegos.print(JTable.PrintMode.NORMAL, header, footer);
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "No se pudo imprimir.",
+                    "Advertencia", JOptionPane.INFORMATION_MESSAGE);
+        }
+    }
+
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton btnRegistrar;
+    private javax.swing.JButton btnBuscar;
+    private javax.swing.JButton btnCancelar;
     private javax.swing.JButton btnRegistrar1;
-    private javax.swing.JComboBox<String> jComboBox1;
-    private com.toedter.calendar.JDateChooser jDateChooser1;
+    private javax.swing.JComboBox<String> cboxTipo;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
+    private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
-    private javax.swing.JRadioButton jRadioButton1;
-    private javax.swing.JRadioButton jRadioButton2;
-    private javax.swing.JRadioButton jRadioButton3;
     private javax.swing.JScrollPane jScrollPane12;
-    private javax.swing.JTable tblHectareas9;
+    private com.toedter.calendar.JDateChooser jdate;
+    private javax.swing.JTable tblRiegos;
     // End of variables declaration//GEN-END:variables
 }

@@ -5,6 +5,7 @@
  */
 package Repository;
 
+import dominio.Hectarea;
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.EntityManager;
@@ -17,7 +18,7 @@ import javax.persistence.Persistence;
  */
 public abstract class BaseRepository <T>{
     
-    public abstract boolean guardar(List<Object> lista);
+    public abstract boolean guardar(List<T> lista);
     
     public abstract boolean actualizar(T entidad);
     

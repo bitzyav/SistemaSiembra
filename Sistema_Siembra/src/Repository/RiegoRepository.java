@@ -5,8 +5,12 @@
  */
 package Repository;
 
+import dominio.Hectarea;
 import dominio.Riego;
+import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
@@ -21,7 +25,7 @@ public class RiegoRepository extends BaseRepository<Riego> {
     EntityManager entityManager = this.createEntityManager();
 
     @Override
-    public boolean guardar(List<Object> lista) {
+    public boolean guardar(List<Riego> lista) {
         entityManager.getTransaction().begin();
         for (Object object : lista) {
             entityManager.persist(object);
@@ -86,5 +90,23 @@ public class RiegoRepository extends BaseRepository<Riego> {
         Riego riego = entityManager.find(Riego.class, id);
         entityManager.getTransaction().commit();
         return riego;
+    }
+
+    public List<Riego> buscarPorFecha(Date fecha) {
+        entityManager.getTransaction().begin();
+        CriteriaQuery criteria = entityManager.getCriteriaBuilder().createQuery();
+        criteria.select(criteria.from(Riego.class));
+        Query query = entityManager.createQuery(criteria);
+        List<Riego> riegos = new ArrayList<>(query.getResultList());
+        List<Riego> coincidencias = new ArrayList<>();
+
+        for (Riego r : riegos) {
+            String f1 = fecha.toString().split(" ")[0];
+            String f2 = r.getFechaHora().toString().split(" ")[0];
+            if (f1.equals(f2)) {
+                coincidencias.add(r);
+            }
+        }
+        return coincidencias;
     }
 }

@@ -5,17 +5,36 @@
  */
 package frames;
 
+import Controller.BaseController;
+import Controller.HectareaController;
+import dominio.DetalleRiegos;
+import dominio.Hectarea;
+import java.awt.Color;
+import java.util.ArrayList;
+import java.util.List;
+import javax.swing.JOptionPane;
+import javax.swing.border.MatteBorder;
+import javax.swing.table.DefaultTableModel;
+
 /**
  *
  * @author Bitzy
  */
 public class FrmHectarea extends javax.swing.JFrame {
 
+    BaseController control;
+
     /**
      * Creates new form FrmHectarea
      */
     public FrmHectarea() {
         initComponents();
+        control = new BaseController();
+        obtenerHectareas();
+        txtCoordenadas.setBorder(new MatteBorder(0, 0, 1, 0, Color.black));
+        txtLote.setBorder(new MatteBorder(0, 0, 1, 0, Color.black));
+        txtBloque.setBorder(new MatteBorder(0, 0, 1, 0, Color.black));
+        rbTodosFiltro.setSelected(true);
     }
 
     /**
@@ -27,6 +46,8 @@ public class FrmHectarea extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        gpTipo = new javax.swing.ButtonGroup();
+        gpTipoFiltro = new javax.swing.ButtonGroup();
         jPanel1 = new javax.swing.JPanel();
         jPanel2 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
@@ -35,8 +56,6 @@ public class FrmHectarea extends javax.swing.JFrame {
         txtId = new javax.swing.JTextField();
         btnCancelar = new javax.swing.JButton();
         btnRegistrar = new javax.swing.JButton();
-        txtBloque = new javax.swing.JTextField();
-        jLabel6 = new javax.swing.JLabel();
         jLabel7 = new javax.swing.JLabel();
         rbPropia = new javax.swing.JRadioButton();
         rbArrendada = new javax.swing.JRadioButton();
@@ -44,20 +63,19 @@ public class FrmHectarea extends javax.swing.JFrame {
         txtArrendatario = new javax.swing.JTextField();
         jPanel5 = new javax.swing.JPanel();
         jLabel3 = new javax.swing.JLabel();
-        txtId1 = new javax.swing.JTextField();
-        txtBloque1 = new javax.swing.JTextField();
+        txtCoordenadas = new javax.swing.JTextField();
+        txtBloque = new javax.swing.JTextField();
         jLabel10 = new javax.swing.JLabel();
         jLabel12 = new javax.swing.JLabel();
-        txtArrendatario1 = new javax.swing.JTextField();
+        txtLote = new javax.swing.JTextField();
         jPanel4 = new javax.swing.JPanel();
-        btnActualizar = new javax.swing.JButton();
         btnEliminar = new javax.swing.JButton();
         jScrollPane12 = new javax.swing.JScrollPane();
-        tblHectareas9 = new javax.swing.JTable();
+        tblHectareas = new javax.swing.JTable();
         jLabel16 = new javax.swing.JLabel();
-        btnBuscar = new javax.swing.JButton();
-        cboxPropia = new javax.swing.JCheckBox();
-        cboxArrendada = new javax.swing.JCheckBox();
+        rbTodosFiltro = new javax.swing.JRadioButton();
+        rbArrendadaFiltro = new javax.swing.JRadioButton();
+        rbPropiaFiltro = new javax.swing.JRadioButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Gestionar Hectareas");
@@ -100,26 +118,32 @@ public class FrmHectarea extends javax.swing.JFrame {
         btnCancelar.setFont(new java.awt.Font("Ebrima", 1, 14)); // NOI18N
         btnCancelar.setForeground(new java.awt.Color(255, 255, 255));
         btnCancelar.setText("Cancelar");
+        btnCancelar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCancelarActionPerformed(evt);
+            }
+        });
 
         btnRegistrar.setBackground(new java.awt.Color(51, 51, 51));
         btnRegistrar.setFont(new java.awt.Font("Ebrima", 1, 14)); // NOI18N
         btnRegistrar.setForeground(new java.awt.Color(255, 255, 255));
         btnRegistrar.setText("Registrar");
-
-        txtBloque.setFont(new java.awt.Font("Ebrima", 0, 14)); // NOI18N
-
-        jLabel6.setFont(new java.awt.Font("Ebrima", 1, 14)); // NOI18N
-        jLabel6.setForeground(new java.awt.Color(51, 51, 51));
-        jLabel6.setText("Bloque");
+        btnRegistrar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnRegistrarActionPerformed(evt);
+            }
+        });
 
         jLabel7.setFont(new java.awt.Font("Ebrima", 1, 14)); // NOI18N
         jLabel7.setForeground(new java.awt.Color(51, 51, 51));
         jLabel7.setText("Tipo de hectárea");
 
+        gpTipo.add(rbPropia);
         rbPropia.setFont(new java.awt.Font("Ebrima", 0, 14)); // NOI18N
         rbPropia.setText("Propia");
         rbPropia.setOpaque(false);
 
+        gpTipo.add(rbArrendada);
         rbArrendada.setFont(new java.awt.Font("Ebrima", 0, 14)); // NOI18N
         rbArrendada.setText("Arrendada");
         rbArrendada.setOpaque(false);
@@ -131,47 +155,45 @@ public class FrmHectarea extends javax.swing.JFrame {
         txtArrendatario.setFont(new java.awt.Font("Ebrima", 0, 14)); // NOI18N
 
         jPanel5.setBackground(new java.awt.Color(255, 255, 255));
-        jPanel5.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(83, 57, 43)), "Ubicación del Predio", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.TOP, new java.awt.Font("Ebrima", 1, 14), new java.awt.Color(51, 51, 51))); // NOI18N
+        jPanel5.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(153, 153, 153)), "Ubicación del Predio", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.TOP, new java.awt.Font("Ebrima", 1, 14), new java.awt.Color(51, 51, 51))); // NOI18N
         jPanel5.setForeground(new java.awt.Color(51, 51, 51));
 
         jLabel3.setFont(new java.awt.Font("Ebrima", 1, 14)); // NOI18N
         jLabel3.setForeground(new java.awt.Color(51, 51, 51));
-        jLabel3.setText("ID Hectárea");
+        jLabel3.setText("Coordenadas");
 
-        txtId1.setEditable(false);
-        txtId1.setBackground(new java.awt.Color(242, 242, 242));
-        txtId1.setFont(new java.awt.Font("Ebrima", 0, 14)); // NOI18N
+        txtCoordenadas.setFont(new java.awt.Font("Ebrima", 0, 14)); // NOI18N
 
-        txtBloque1.setFont(new java.awt.Font("Ebrima", 0, 14)); // NOI18N
-        txtBloque1.addActionListener(new java.awt.event.ActionListener() {
+        txtBloque.setFont(new java.awt.Font("Ebrima", 0, 14)); // NOI18N
+        txtBloque.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txtBloque1ActionPerformed(evt);
+                txtBloqueActionPerformed(evt);
             }
         });
 
         jLabel10.setFont(new java.awt.Font("Ebrima", 1, 14)); // NOI18N
         jLabel10.setForeground(new java.awt.Color(51, 51, 51));
-        jLabel10.setText("Bloque");
+        jLabel10.setText("Bloque o manzana");
 
         jLabel12.setFont(new java.awt.Font("Ebrima", 1, 14)); // NOI18N
         jLabel12.setForeground(new java.awt.Color(51, 51, 51));
-        jLabel12.setText("Arrendatario");
+        jLabel12.setText("Lote");
 
-        txtArrendatario1.setFont(new java.awt.Font("Ebrima", 0, 14)); // NOI18N
+        txtLote.setFont(new java.awt.Font("Ebrima", 0, 14)); // NOI18N
 
         javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
         jPanel5.setLayout(jPanel5Layout);
         jPanel5Layout.setHorizontalGroup(
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel5Layout.createSequentialGroup()
-                .addGap(15, 15, 15)
+                .addGap(25, 25, 25)
                 .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(txtArrendatario1, javax.swing.GroupLayout.DEFAULT_SIZE, 184, Short.MAX_VALUE)
+                    .addComponent(txtLote, javax.swing.GroupLayout.DEFAULT_SIZE, 184, Short.MAX_VALUE)
                     .addComponent(jLabel12)
                     .addComponent(jLabel10)
                     .addComponent(jLabel3)
-                    .addComponent(txtBloque1)
-                    .addComponent(txtId1))
+                    .addComponent(txtBloque)
+                    .addComponent(txtCoordenadas))
                 .addContainerGap(22, Short.MAX_VALUE))
         );
         jPanel5Layout.setVerticalGroup(
@@ -180,16 +202,16 @@ public class FrmHectarea extends javax.swing.JFrame {
                 .addGap(15, 15, 15)
                 .addComponent(jLabel3)
                 .addGap(15, 15, 15)
-                .addComponent(txtId1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(txtCoordenadas, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(15, 15, 15)
                 .addComponent(jLabel12, javax.swing.GroupLayout.PREFERRED_SIZE, 19, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addComponent(txtArrendatario1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(txtLote, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(15, 15, 15)
                 .addComponent(jLabel10, javax.swing.GroupLayout.PREFERRED_SIZE, 19, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(txtBloque1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addComponent(txtBloque, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(25, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
@@ -197,31 +219,22 @@ public class FrmHectarea extends javax.swing.JFrame {
         jPanel3Layout.setHorizontalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(txtId, javax.swing.GroupLayout.PREFERRED_SIZE, 228, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(jPanel3Layout.createSequentialGroup()
-                            .addGap(25, 25, 25)
-                            .addComponent(jLabel2))
-                        .addGroup(jPanel3Layout.createSequentialGroup()
-                            .addGap(25, 25, 25)
-                            .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                                .addComponent(txtArrendatario, javax.swing.GroupLayout.Alignment.LEADING)
-                                .addComponent(jLabel8, javax.swing.GroupLayout.Alignment.LEADING)
-                                .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel3Layout.createSequentialGroup()
-                                    .addComponent(rbPropia)
-                                    .addGap(31, 31, 31)
-                                    .addComponent(rbArrendada))
-                                .addComponent(jLabel7, javax.swing.GroupLayout.Alignment.LEADING)
-                                .addComponent(jLabel6, javax.swing.GroupLayout.Alignment.LEADING)
-                                .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel3Layout.createSequentialGroup()
-                                    .addComponent(btnRegistrar)
-                                    .addGap(34, 34, 34)
-                                    .addComponent(btnCancelar))
-                                .addComponent(txtBloque, javax.swing.GroupLayout.Alignment.LEADING)))
-                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
-                            .addGap(25, 25, 25)
-                            .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                .addGap(25, 25, 25)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jLabel2)
+                    .addComponent(jLabel8)
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addComponent(rbPropia)
+                        .addGap(31, 31, 31)
+                        .addComponent(rbArrendada))
+                    .addComponent(jLabel7)
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addComponent(btnRegistrar)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(btnCancelar))
+                    .addComponent(jPanel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(txtId)
+                    .addComponent(txtArrendatario))
                 .addGap(25, 25, 25))
         );
         jPanel3Layout.setVerticalGroup(
@@ -229,74 +242,100 @@ public class FrmHectarea extends javax.swing.JFrame {
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addGap(15, 15, 15)
                 .addComponent(jLabel2)
-                .addGap(15, 15, 15)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(txtId, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(20, 20, 20)
+                .addGap(22, 22, 22)
                 .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 20, Short.MAX_VALUE)
+                .addGap(30, 30, 30)
                 .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 19, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(rbArrendada)
                     .addComponent(rbPropia))
-                .addGap(30, 30, 30)
+                .addGap(25, 25, 25)
                 .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 19, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(txtArrendatario, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(30, 30, 30)
-                .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 19, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(txtBloque, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(30, 30, 30)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnRegistrar)
                     .addComponent(btnCancelar))
-                .addGap(29, 29, 29))
+                .addGap(30, 30, 30))
         );
 
         jPanel4.setBackground(new java.awt.Color(255, 255, 255));
         jPanel4.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(83, 57, 43)), "Lista de hectáreas", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.TOP, new java.awt.Font("Ebrima", 1, 12), new java.awt.Color(51, 51, 51))); // NOI18N
         jPanel4.setForeground(new java.awt.Color(51, 51, 51));
 
-        btnActualizar.setBackground(new java.awt.Color(51, 51, 51));
-        btnActualizar.setFont(new java.awt.Font("Ebrima", 1, 14)); // NOI18N
-        btnActualizar.setForeground(new java.awt.Color(255, 255, 255));
-        btnActualizar.setText("Actualizar");
-
         btnEliminar.setBackground(new java.awt.Color(51, 51, 51));
         btnEliminar.setFont(new java.awt.Font("Ebrima", 1, 14)); // NOI18N
         btnEliminar.setForeground(new java.awt.Color(255, 255, 255));
         btnEliminar.setText("Eliminar");
+        btnEliminar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnEliminarActionPerformed(evt);
+            }
+        });
 
         jScrollPane12.setFont(new java.awt.Font("Ebrima", 0, 14)); // NOI18N
 
-        tblHectareas9.setFont(new java.awt.Font("Ebrima", 0, 12)); // NOI18N
-        tblHectareas9.setModel(new javax.swing.table.DefaultTableModel(
+        tblHectareas.setFont(new java.awt.Font("Ebrima", 0, 12)); // NOI18N
+        tblHectareas.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
             },
             new String [] {
-                "ID Riego", "No. Hectáreas", "Tipo Riego", "Cultivo", "Ubicación predio", "Capacidad agua", "Fecha y hora", "Observaciones", "Estado", "Disponible"
+                "ID Hectarea", "Coordenadas", "Lote", "Bloque", "Tipo", "Arrendatario"
             }
-        ));
-        jScrollPane12.setViewportView(tblHectareas9);
+        ) {
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false, false, false
+            };
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        tblHectareas.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tblHectareasMouseClicked(evt);
+            }
+        });
+        jScrollPane12.setViewportView(tblHectareas);
 
         jLabel16.setFont(new java.awt.Font("Ebrima", 1, 12)); // NOI18N
         jLabel16.setForeground(new java.awt.Color(51, 51, 51));
         jLabel16.setText("Tipo de hectárea");
 
-        btnBuscar.setBackground(new java.awt.Color(51, 51, 51));
-        btnBuscar.setFont(new java.awt.Font("Ebrima", 1, 12)); // NOI18N
-        btnBuscar.setForeground(new java.awt.Color(255, 255, 255));
-        btnBuscar.setText("Buscar");
+        gpTipoFiltro.add(rbTodosFiltro);
+        rbTodosFiltro.setFont(new java.awt.Font("Ebrima", 0, 12)); // NOI18N
+        rbTodosFiltro.setText("Todos");
+        rbTodosFiltro.setOpaque(false);
+        rbTodosFiltro.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                rbTodosFiltroItemStateChanged(evt);
+            }
+        });
 
-        cboxPropia.setFont(new java.awt.Font("Ebrima", 0, 12)); // NOI18N
-        cboxPropia.setText("Propia");
-        cboxPropia.setOpaque(false);
+        gpTipoFiltro.add(rbArrendadaFiltro);
+        rbArrendadaFiltro.setFont(new java.awt.Font("Ebrima", 0, 12)); // NOI18N
+        rbArrendadaFiltro.setText("Arrendada");
+        rbArrendadaFiltro.setOpaque(false);
+        rbArrendadaFiltro.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                rbArrendadaFiltroItemStateChanged(evt);
+            }
+        });
 
-        cboxArrendada.setFont(new java.awt.Font("Ebrima", 0, 12)); // NOI18N
-        cboxArrendada.setText("Arrendada");
-        cboxArrendada.setOpaque(false);
+        gpTipoFiltro.add(rbPropiaFiltro);
+        rbPropiaFiltro.setFont(new java.awt.Font("Ebrima", 0, 12)); // NOI18N
+        rbPropiaFiltro.setText("Propia");
+        rbPropiaFiltro.setOpaque(false);
+        rbPropiaFiltro.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                rbPropiaFiltroItemStateChanged(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
         jPanel4.setLayout(jPanel4Layout);
@@ -305,38 +344,33 @@ public class FrmHectarea extends javax.swing.JFrame {
             .addGroup(jPanel4Layout.createSequentialGroup()
                 .addContainerGap(25, Short.MAX_VALUE)
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(jPanel4Layout.createSequentialGroup()
-                        .addComponent(btnActualizar)
-                        .addGap(65, 65, 65)
-                        .addComponent(btnEliminar))
+                    .addComponent(btnEliminar)
                     .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                         .addGroup(jPanel4Layout.createSequentialGroup()
                             .addComponent(jLabel16)
                             .addGap(18, 18, 18)
-                            .addComponent(cboxPropia)
-                            .addGap(29, 29, 29)
-                            .addComponent(cboxArrendada)
-                            .addGap(35, 35, 35)
-                            .addComponent(btnBuscar))
+                            .addComponent(rbTodosFiltro)
+                            .addGap(30, 30, 30)
+                            .addComponent(rbPropiaFiltro)
+                            .addGap(30, 30, 30)
+                            .addComponent(rbArrendadaFiltro))
                         .addComponent(jScrollPane12, javax.swing.GroupLayout.PREFERRED_SIZE, 1006, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap(25, Short.MAX_VALUE))
         );
         jPanel4Layout.setVerticalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel4Layout.createSequentialGroup()
-                .addGap(15, 15, 15)
+                .addGap(25, 25, 25)
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel16)
-                    .addComponent(btnBuscar)
-                    .addComponent(cboxPropia)
-                    .addComponent(cboxArrendada))
-                .addGap(20, 20, 20)
-                .addComponent(jScrollPane12, javax.swing.GroupLayout.PREFERRED_SIZE, 562, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(rbArrendadaFiltro)
+                    .addComponent(rbPropiaFiltro)
+                    .addComponent(rbTodosFiltro))
+                .addGap(21, 21, 21)
+                .addComponent(jScrollPane12, javax.swing.GroupLayout.PREFERRED_SIZE, 479, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btnActualizar)
-                    .addComponent(btnEliminar))
-                .addGap(33, 33, 33))
+                .addComponent(btnEliminar)
+                .addGap(26, 26, 26))
         );
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
@@ -349,7 +383,7 @@ public class FrmHectarea extends javax.swing.JFrame {
                 .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(41, 41, 41)
                 .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(20, Short.MAX_VALUE))
+                .addContainerGap(30, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -359,7 +393,7 @@ public class FrmHectarea extends javax.swing.JFrame {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addGap(0, 27, Short.MAX_VALUE))
+                .addContainerGap(30, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -370,15 +404,68 @@ public class FrmHectarea extends javax.swing.JFrame {
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void txtBloque1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtBloque1ActionPerformed
+    private void txtBloqueActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtBloqueActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_txtBloque1ActionPerformed
+    }//GEN-LAST:event_txtBloqueActionPerformed
+
+    private void btnRegistrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRegistrarActionPerformed
+        if (validarEspaciosEnBlanco()) {
+            if (this.txtId.getText().equals("")) {
+                this.registrarHectarea();
+            } else {
+                this.actualizarHectarea();
+            }
+            this.obtenerHectareas();
+            this.limpiarFormulario();
+        } else {
+            JOptionPane.showMessageDialog(this, "Revise que alguno de sus campos no este vacio.",
+                    "Campo vacio", JOptionPane.INFORMATION_MESSAGE);
+        }
+    }//GEN-LAST:event_btnRegistrarActionPerformed
+
+    private void btnCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelarActionPerformed
+        FrmMenu menu = new FrmMenu();
+        menu.setVisible(true);
+        this.dispose();
+    }//GEN-LAST:event_btnCancelarActionPerformed
+
+    private void btnEliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEliminarActionPerformed
+        int respuesta = JOptionPane.showConfirmDialog(this, "¿Seguro que desea eliminarla?", "Advertencia", JOptionPane.YES_NO_OPTION);
+        if (respuesta == 0) {
+            this.eliminarHectarea();
+            this.obtenerHectareas();
+        }
+    }//GEN-LAST:event_btnEliminarActionPerformed
+
+    private void rbTodosFiltroItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_rbTodosFiltroItemStateChanged
+        if (rbTodosFiltro.isSelected()) {
+            obtenerHectareas();
+        }
+    }//GEN-LAST:event_rbTodosFiltroItemStateChanged
+
+    private void rbPropiaFiltroItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_rbPropiaFiltroItemStateChanged
+        if (rbPropiaFiltro.isSelected()) {
+            obtenerHectPropia();
+        }
+    }//GEN-LAST:event_rbPropiaFiltroItemStateChanged
+
+    private void rbArrendadaFiltroItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_rbArrendadaFiltroItemStateChanged
+        if (rbArrendadaFiltro.isSelected()) {
+            obtenerHectArrendada();
+        }
+    }//GEN-LAST:event_rbArrendadaFiltroItemStateChanged
+
+    private void tblHectareasMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblHectareasMouseClicked
+        if (evt.getClickCount() == 2) {
+            this.cargarHectarea();
+        }
+    }//GEN-LAST:event_tblHectareasMouseClicked
 
     /**
      * @param args the command line arguments
@@ -416,20 +503,17 @@ public class FrmHectarea extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton btnActualizar;
-    private javax.swing.JButton btnBuscar;
     private javax.swing.JButton btnCancelar;
     private javax.swing.JButton btnEliminar;
     private javax.swing.JButton btnRegistrar;
-    private javax.swing.JCheckBox cboxArrendada;
-    private javax.swing.JCheckBox cboxPropia;
+    private javax.swing.ButtonGroup gpTipo;
+    private javax.swing.ButtonGroup gpTipoFiltro;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel16;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
-    private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JPanel jPanel1;
@@ -439,13 +523,154 @@ public class FrmHectarea extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel5;
     private javax.swing.JScrollPane jScrollPane12;
     private javax.swing.JRadioButton rbArrendada;
+    private javax.swing.JRadioButton rbArrendadaFiltro;
     private javax.swing.JRadioButton rbPropia;
-    private javax.swing.JTable tblHectareas9;
+    private javax.swing.JRadioButton rbPropiaFiltro;
+    private javax.swing.JRadioButton rbTodosFiltro;
+    private javax.swing.JTable tblHectareas;
     private javax.swing.JTextField txtArrendatario;
-    private javax.swing.JTextField txtArrendatario1;
     private javax.swing.JTextField txtBloque;
-    private javax.swing.JTextField txtBloque1;
+    private javax.swing.JTextField txtCoordenadas;
     private javax.swing.JTextField txtId;
-    private javax.swing.JTextField txtId1;
+    private javax.swing.JTextField txtLote;
     // End of variables declaration//GEN-END:variables
+
+    public void registrarHectarea() {
+        List<Hectarea> entidades = new ArrayList<>();
+        String tipoHectarea = (rbPropia.isSelected()) ? "Propia" : "Arrendada";
+        Hectarea hectarea = new Hectarea(txtBloque.getText(), txtLote.getText(),
+                tipoHectarea, txtCoordenadas.getText(), txtArrendatario.getText());
+        entidades.add(hectarea);
+        if (control.getHectareaRepository().guardar(entidades)) {
+            JOptionPane.showMessageDialog(this, "La hectarea ha sido registrada.",
+                    "Registro exitoso.", JOptionPane.INFORMATION_MESSAGE);
+        } else {
+            JOptionPane.showMessageDialog(this, "Error al  guardar la hectárea.",
+                    "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    public void actualizarHectarea() {
+        Hectarea hectarea = control.getHectareaRepository().buscarPorID(Integer.parseInt(txtId.getText()));
+        hectarea.setCoordenadas(txtCoordenadas.getText());
+        hectarea.setLote(txtLote.getText());
+        hectarea.setBloque(txtBloque.getText());
+        hectarea.setArrendatario(txtArrendatario.getText());
+        String tipoHectarea = (rbPropia.isSelected()) ? "Propia" : "Arrendada";
+        hectarea.setTipoHectarea(tipoHectarea);
+        
+        System.out.println(hectarea.toString());
+        if (control.getHectareaRepository().actualizar(hectarea)) {
+            JOptionPane.showMessageDialog(this, "La hectárea ha sido actualizada.",
+                    "Registro exitoso.", JOptionPane.INFORMATION_MESSAGE);
+        } else {
+            JOptionPane.showMessageDialog(this, "Error al actualizar la hectárea.",
+                    "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    public void eliminarHectarea() {
+        int fila = this.tblHectareas.getSelectedRow();
+        if (fila == -1) {
+            JOptionPane.showMessageDialog(this, "Seleccione una hectárea.",
+                    "Precaución", JOptionPane.WARNING_MESSAGE);
+        } else {
+            DefaultTableModel modelo = (DefaultTableModel) this.tblHectareas.getModel();
+            Integer idHectarea = (Integer) modelo.getValueAt(fila, 0);
+            boolean eliminado = this.control.getHectareaRepository().eliminar(idHectarea);
+            if (eliminado == true) {
+                JOptionPane.showMessageDialog(this, "Hectárea eliminada correctamente.",
+                        "Información", JOptionPane.INFORMATION_MESSAGE);
+            } else {
+                JOptionPane.showMessageDialog(this, "No se pudo eliminar la hectárea.",
+                        "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+    }
+
+    private void cargarHectarea() {
+        int fila = this.tblHectareas.getSelectedRow();
+
+        DefaultTableModel modelo = (DefaultTableModel) this.tblHectareas.getModel();
+        Integer idHectarea = (Integer) modelo.getValueAt(fila, 0);
+        Hectarea hectarea = control.getHectareaRepository().buscarPorID(idHectarea);
+        if (hectarea != null) {
+            txtId.setText(String.valueOf(hectarea.getId()));
+            txtCoordenadas.setText(hectarea.getCoordenadas());
+            txtLote.setText(hectarea.getLote());
+            txtBloque.setText(hectarea.getBloque());
+            txtArrendatario.setText(hectarea.getArrendatario());
+            if (hectarea.getTipoHectarea().equals("Propia")) {
+                rbPropia.setSelected(true);
+            }else{
+                rbArrendada.setSelected(true);
+            }
+        }
+
+    }
+
+    private void limpiarFormulario() {
+        txtId.setText("");
+        txtCoordenadas.setText("");
+        txtLote.setText("");
+        txtBloque.setText("");
+        txtArrendatario.setText("");
+        rbArrendada.setSelected(false);
+        rbPropia.setSelected(false);
+    }
+
+    public boolean validarEspaciosEnBlanco() {
+        if (!txtLote.getText().trim().isEmpty()
+                && !txtArrendatario.getText().trim().isEmpty()
+                && !txtBloque.getText().trim().isEmpty()
+                && !txtCoordenadas.getText().trim().isEmpty()
+                && rbArrendada.isSelected() || rbPropia.isSelected()) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public void obtenerHectareas() {
+        List<Hectarea> hectareas = control.getHectareaRepository().buscarTodos();
+        if (hectareas != null) {
+            DefaultTableModel modelo = (DefaultTableModel) tblHectareas.getModel();
+            modelo.setRowCount(0);
+            for (Hectarea h : hectareas) {
+                modelo.addRow(h.toArray());
+            }
+        } else {
+            JOptionPane.showMessageDialog(this, "Sin resultados.",
+                    "Información", JOptionPane.INFORMATION_MESSAGE);
+        }
+    }
+
+    public void obtenerHectPropia() {
+        List<Hectarea> hectareas = control.getHectareaRepository().buscarHectPropia("Propia");
+        if (hectareas != null) {
+            DefaultTableModel modelo = (DefaultTableModel) tblHectareas.getModel();
+            modelo.setRowCount(0);
+            for (Hectarea h : hectareas) {
+                modelo.addRow(h.toArray());
+            }
+        } else {
+            JOptionPane.showMessageDialog(this, "Sin resultados.",
+                    "Información", JOptionPane.INFORMATION_MESSAGE);
+        }
+    }
+
+    public void obtenerHectArrendada() {
+        List<Hectarea> hectareas = control.getHectareaRepository().buscarHectPropia("Arrendada");
+        if (hectareas != null) {
+            DefaultTableModel modelo = (DefaultTableModel) tblHectareas.getModel();
+            modelo.setRowCount(0);
+            for (Hectarea h : hectareas) {
+                modelo.addRow(h.toArray());
+            }
+        } else {
+            JOptionPane.showMessageDialog(this, "Sin resultados.",
+                    "Información", JOptionPane.INFORMATION_MESSAGE);
+        }
+    }
+
 }

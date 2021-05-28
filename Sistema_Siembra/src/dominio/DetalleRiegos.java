@@ -123,8 +123,7 @@ public class DetalleRiegos implements Serializable {
     public Object[] toArray() {
         return new Object[]{
             this.hectarea.getId(),
-            this.hectarea.getBloque(),
-            this.hectarea.getUbicacionPredio()
+            this.hectarea.getBloque()
         };
     }
 }

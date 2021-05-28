@@ -29,23 +29,33 @@ public class Hectarea implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(name = "ubicacion_predio", length = 50, nullable = false)
-    private String ubicacionPredio;
-
     @Column(name = "bloque", length = 100, nullable = false)
     private String bloque;
+    
+    @Column(name = "lote", length = 100, nullable = false)
+    private String lote;
 
     @Column(name = "tipo_hectarea", length = 100, nullable = false)
     private String tipoHectarea;
+    
+    @Column(name = "coordenadas", length = 100, nullable = false)
+    private String coordenadas;
+    
+    @Column(name = "arrendatario", length = 150, nullable = false)
+    private String arrendatario;
 
     @OneToMany(mappedBy = "hectarea", cascade = CascadeType.ALL)
     private List<DetalleRiegos> riegos;
 
 //    @OneToMany(mappedBy = "hectarea", cascade = CascadeType.ALL)
 //    private List<DetalleDeshierbe> deshierbes;
-    public Hectarea(String ubicacionPredio, String bloque) {
-        this.ubicacionPredio = ubicacionPredio;
+
+    public Hectarea(String bloque, String lote, String tipoHectarea, String coordenadas, String arrendatario) {
         this.bloque = bloque;
+        this.lote = lote;
+        this.tipoHectarea = tipoHectarea;
+        this.coordenadas = coordenadas;
+        this.arrendatario = arrendatario;
     }
 
     public Hectarea() {
@@ -68,6 +78,38 @@ public class Hectarea implements Serializable {
         this.id = id;
     }
 
+    public String getLote() {
+        return lote;
+    }
+
+    public void setLote(String lote) {
+        this.lote = lote;
+    }
+
+    public String getCoordenadas() {
+        return coordenadas;
+    }
+
+    public void setCoordenadas(String coordenadas) {
+        this.coordenadas = coordenadas;
+    }
+
+    public String getArrendatario() {
+        return arrendatario;
+    }
+
+    public void setArrendatario(String arrendatario) {
+        this.arrendatario = arrendatario;
+    }
+
+    public String getTipoHectarea() {
+        return tipoHectarea;
+    }
+
+    public void setTipoHectarea(String tipoHectarea) {
+        this.tipoHectarea = tipoHectarea;
+    }
+
     public String getBloque() {
         return bloque;
     }
@@ -76,16 +118,8 @@ public class Hectarea implements Serializable {
         this.bloque = bloque;
     }
 
-    public String getUbicacionPredio() {
-        return ubicacionPredio;
-    }
-
     public List<DetalleRiegos> getRiegos() {
         return riegos;
-    }
-
-    public void setUbicacionPredio(String ubicacionPredio) {
-        this.ubicacionPredio = ubicacionPredio;
     }
 
     public void setRiegos(List<DetalleRiegos> riegos) {
@@ -117,11 +151,25 @@ public class Hectarea implements Serializable {
         return "dominio.Hectarea[ id=" + id + " ]";
     }
 
+    //acomo en tabla, en orden.
     public Object[] toArray() {
         return new Object[]{
             this.getId(),
+            this.getCoordenadas(),
+            this.getLote(),
             this.getBloque(),
-            this.getUbicacionPredio()
+            this.getTipoHectarea(),
+            this.getArrendatario()
+
+        };
+    }
+    
+    public Object[] toArrayFrmRiego() {
+        return new Object[]{
+            this.getId(),
+            this.getCoordenadas(),
+            this.getBloque(),
+            this.getTipoHectarea(),
         };
     }
 }

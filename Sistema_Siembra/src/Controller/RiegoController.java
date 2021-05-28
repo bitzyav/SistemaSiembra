@@ -7,7 +7,6 @@ package Controller;
 
 import Repository.RiegoRepository;
 import dominio.Riego;
-import java.util.ArrayList;
 import java.util.List;
 /**
  *
@@ -18,7 +17,7 @@ public class RiegoController {
     private final RiegoRepository riegoRepository = control.getRiegoRepository();
     
     
-    public boolean guardarRiego(List<Object> lista) {
+    public boolean guardarRiego(List<Riego> lista) {
         return this.riegoRepository.guardar(lista);
     }
 
