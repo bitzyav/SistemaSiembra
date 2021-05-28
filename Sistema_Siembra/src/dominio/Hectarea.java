@@ -21,45 +21,45 @@ import javax.persistence.Table;
  *
  * @author Bitzy
  */
-
 @Entity
-@Table(name="hectareas")
+@Table(name = "hectareas")
 public class Hectarea implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-    
-    @Column(name="ubicacion_predio", length=50, nullable=false) 
+
+    @Column(name = "ubicacion_predio", length = 50, nullable = false)
     private String ubicacionPredio;
-    
-    @Column(name="bloque", length=100, nullable=false) 
+
+    @Column(name = "bloque", length = 100, nullable = false)
     private String bloque;
-    
+
+    @Column(name = "tipo_hectarea", length = 100, nullable = false)
+    private String tipoHectarea;
+
     @OneToMany(mappedBy = "hectarea", cascade = CascadeType.ALL)
     private List<DetalleRiegos> riegos;
-    
+
 //    @OneToMany(mappedBy = "hectarea", cascade = CascadeType.ALL)
 //    private List<DetalleDeshierbe> deshierbes;
-
     public Hectarea(String ubicacionPredio, String bloque) {
         this.ubicacionPredio = ubicacionPredio;
         this.bloque = bloque;
     }
-    
+
     public Hectarea() {
         this.riegos = new ArrayList();
 //        this.deshierbes = new ArrayList();
     }
-    
-    public void agregarRiego(DetalleRiegos detalle){
+
+    public void agregarRiego(DetalleRiegos detalle) {
         this.riegos.add(detalle);
     }
-    
+
 //    public void agregarDeshierbe(DetalleDeshierbe detalle){
 //        this.deshierbes.add(detalle);
 //    }
-    
     public Integer getId() {
         return id;
     }
@@ -116,7 +116,7 @@ public class Hectarea implements Serializable {
     public String toString() {
         return "dominio.Hectarea[ id=" + id + " ]";
     }
-    
+
     public Object[] toArray() {
         return new Object[]{
             this.getId(),
